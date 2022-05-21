@@ -15,7 +15,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Employee(Fname,Minit,Lname,ssn,Bdate,address,sex,salary,Super_snn,dno) "
                  + "VALUES(?,?,?,?,?,?,?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -61,7 +61,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Department(Dname,Dnumber,Mgr_snn,Mgr_start_date) "
                  + "VALUES(?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -101,7 +101,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Dept_locations(Dnumber,Dlocation) "
                  + "VALUES(?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -141,7 +141,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Project(Pname,Pnumber,Plocation,Dnumber) "
                  + "VALUES(?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -182,7 +182,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Works_on(Essn,Pno,Hours) "
                  + "VALUES(?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -222,7 +222,7 @@ public class Schema2 {
          String SQL = "INSERT INTO Dependent(Essn,Dependent_name,sex,Bdate,Relationship) "
                  + "VALUES(?,?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -266,7 +266,7 @@ public class Schema2 {
                 String result = "M";
                 if (i > 5000) 
                 	result = "F";
-				if (insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,result,i,i,i, conn) == 0) {
+				if (insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,result,i,i,i, conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
@@ -282,7 +282,7 @@ public class Schema2 {
 	 @SuppressWarnings("deprecation")
 	public static void populateDepartment(Connection conn) {
 		 for (int i = 1; i < 10000; i++) {
-				if (insertDepartment("Department" + i, i,i,new Date(1,1,1990), conn) == 0) {
+				if (insertDepartment("Department" + i, i,i,new Date(1,1,1990), conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
@@ -291,7 +291,7 @@ public class Schema2 {
 	 }
 		public static void populateDeptLocations(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
-					if (insertDeptLocations(i, "Location" + i, conn) == 0) {
+					if (insertDeptLocations(i, "Location" + i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -301,7 +301,7 @@ public class Schema2 {
 		
 		public static void populateProject(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
-					if (insertProject("Project" + i, i,"Location1" + i,i, conn) == 0) {
+					if (insertProject("Project" + i, i,"Location1" + i,i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -310,7 +310,7 @@ public class Schema2 {
 		 }
 		public static void populateWorksOn(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
-					if (insertWorksOn(i, i, i, conn) == 0) {
+					if (insertWorksOn(i, i, i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -323,7 +323,7 @@ public class Schema2 {
 				 String result = "F";
 				 if (i > 5000) 
 					 result = "M";
-					if (insertDependent(i, "Name" + i, result,new Date(1,1,1999),"child", conn) == 0) {
+					if (insertDependent(i, "Name" + i, result,new Date(1,1,1999),"child", conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else

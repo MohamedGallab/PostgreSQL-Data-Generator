@@ -16,7 +16,7 @@ public class Schema3 {
          String SQL = "INSERT INTO Sailors(sid,sname,rating,age) "
                  + "VALUES(?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -55,7 +55,7 @@ public class Schema3 {
          String SQL = "INSERT INTO Boat(bid,bname,color) "
                  + "VALUES(?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -93,7 +93,7 @@ public class Schema3 {
          String SQL = "INSERT INTO Reserves(sid,bid,day) "
                  + "VALUES(?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -132,7 +132,7 @@ public class Schema3 {
 	 ///////////////////////////////////////////////////////// Data Population Methods //////////////////////////////////////////////////////////
 	 public static void populateSailor(Connection conn) {
 		 for (int i = 1; i < 10000; i++) {
-				if (insertSailor(i, "Sailor" + i,i,i, conn) == 0) {
+				if (insertSailor(i, "Sailor" + i,i,i, conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
@@ -141,7 +141,7 @@ public class Schema3 {
 	 }
 	 public static void populateBoat(Connection conn) {
 		 for (int i = 1; i < 10000; i++) {
-				if (insertBoat(i, "Boat" + i,"Red", conn) == 0) {
+				if (insertBoat(i, "Boat" + i,"Red", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
@@ -151,7 +151,7 @@ public class Schema3 {
 	 @SuppressWarnings("deprecation")
 	public static void populateReserves(Connection conn) {
 		 for (int i = 1; i < 10000; i++) {
-				if (insertReserves(i, i,new Date(1,1,1999), conn) == 0) {
+				if (insertReserves(i, i,new Date(1,1,1999), conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else

@@ -14,7 +14,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Movie(mov_id,mov_title,mov_year,mov_time,mov_lang,mov_dt_rel,mov_rel_country) "
                  + "VALUES(?,?,?,?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -58,7 +58,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Reviewer(rev_id,rev_name) "
                  + "VALUES(?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -96,7 +96,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Genres(gen_id,gen_title) "
                  + "VALUES(?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -135,7 +135,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Actor(act_id,act_fname,act_lname,act_gender) "
                  + "VALUES(?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -175,7 +175,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Director(dir_id,dir_fname,dir_lname) "
                  + "VALUES(?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -213,7 +213,7 @@ public class Schema4 {
          String SQL = "INSERT INTO movie_direction(dir_id,mov_id) "
                  + "VALUES(?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -252,7 +252,7 @@ public class Schema4 {
          String SQL = "INSERT INTO movie_cast(act_id,mov_id,role) "
                  + "VALUES(?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -291,7 +291,7 @@ public class Schema4 {
          String SQL = "INSERT INTO movie_genres(mov_id,gen_id) "
                  + "VALUES(?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -329,7 +329,7 @@ public class Schema4 {
          String SQL = "INSERT INTO Rating(mov_id,rev_id,rev_stars,num_o_ratings) "
                  + "VALUES(?,?,?,?);";
       
-         long id = 0;
+         long id = -1;
         try{
         	 conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement(SQL,
@@ -373,7 +373,7 @@ public class Schema4 {
 	public static void populateMovie(Connection conn) {
 		 for (int i = 1; i < 10000; i++) {
 
-				if (insertMovie(i, "Movie" + i,i, i, "EN", new Date(22,1,1999), "US", conn) == 0) {
+				if (insertMovie(i, "Movie" + i,i, i, "EN", new Date(22,1,1999), "US", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
@@ -384,7 +384,7 @@ public class Schema4 {
 		public static void populateReviewer(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
 
-					if (insertReviewer(i, "Name" + i, conn) == 0) {
+					if (insertReviewer(i, "Name" + i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -394,7 +394,7 @@ public class Schema4 {
 		public static void populateGenres(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
 
-					if (insertGenres(i, "Gnere" + i, conn) == 0) {
+					if (insertGenres(i, "Gnere" + i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -406,7 +406,7 @@ public class Schema4 {
                      String result = "M";
                      if (i > 5000) 
                     	 result = "F";
-					if (insertActor(i, "Actor" + i,"Actor" + i,result, conn) == 0) {
+					if (insertActor(i, "Actor" + i,"Actor" + i,result, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -416,7 +416,7 @@ public class Schema4 {
 		public static void populateDirector(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
                    
-					if (insertDirector(i, "Actor" + i,"Actor" + i, conn) == 0) {
+					if (insertDirector(i, "Actor" + i,"Actor" + i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -427,7 +427,7 @@ public class Schema4 {
 		public static void populateMovieDirection(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
 
-					if (insertMovieDirection(i, i, conn) == 0) {
+					if (insertMovieDirection(i, i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -437,7 +437,7 @@ public class Schema4 {
 		public static void populateMovieCast(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
                   
-					if (insertMovieCast(i,  i,"Actor" + i, conn) == 0) {
+					if (insertMovieCast(i,  i,"Actor" + i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -448,7 +448,7 @@ public class Schema4 {
 		public static void populateMovieGenres(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
 
-					if (insertMovieGenres(i, i, conn) == 0) {
+					if (insertMovieGenres(i, i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
@@ -459,7 +459,7 @@ public class Schema4 {
 		public static void populateRating(Connection conn) {
 			 for (int i = 1; i < 10000; i++) {
                     
-					if (insertRating(i, i, i,i, conn) == 0) {
+					if (insertRating(i, i, i,i, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
 					} else
