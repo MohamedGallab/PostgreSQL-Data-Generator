@@ -450,7 +450,7 @@ public class Schema1 {
 	}
 
 	public static void populateClassroom(Connection conn) {
-		for (int i = 1; i < 10000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			if (insertClassroom(i, i, 100 + i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
@@ -462,7 +462,7 @@ public class Schema1 {
 
 	@SuppressWarnings("deprecation")
 	public static void populateTimeSlot(Connection conn) {
-		for (int i = 1; i < 10000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			if (insertTimeSlot(i, "day" + i, new Time(12, 0, 0), new Time(13, 0, 0), conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
@@ -516,9 +516,10 @@ public class Schema1 {
 	}
 
 	public static void populatePrerequiste(Connection conn) {
-		for (int i = 1; i < 10000; i++) {
-			if (insertPrerequiste(i, i, conn) == -1) {
+		for (int i = 0; i < (45*60); i++) {
+			if (insertPrerequiste(i, i+1, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
+				i++;
 				break;
 			}
 			else
@@ -527,9 +528,10 @@ public class Schema1 {
 	}
 
 	public static void populateSection(Connection conn) {
+		
 		int j = 1;
-		for (int i = 1; i < 10000; i++) {
-			if (insertSection(i, i, 2019, i, i, j, j, conn) == -1) {
+		for (int i = 0; i < 100; i++) {
+			if (insertSection(i, i, 2019, i%(35*60), i, j, j, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
 			}
@@ -541,10 +543,10 @@ public class Schema1 {
 
 	public static void populateTakes(Connection conn) {
 		double j = 0.7;
-		for (int i = 1; i < 10000; i++) {
+		for (int i = 1; i < (1100*60); i++) {
 			if (j == 5)
 				j = 0.7;
-			if (insertTakes(i, i, j, conn) == -1) {
+			if (insertTakes(i, i%100, j, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
 			}
@@ -556,7 +558,7 @@ public class Schema1 {
 
 	public static void populateSectionTime(Connection conn) {
 		for (int i = 1; i < 10000; i++) {
-			if (insertSectionTime(i, i, conn) == -1) {
+			if (insertSectionTime(i, i%100, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
 			}
