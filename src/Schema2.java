@@ -33,12 +33,12 @@ public class Schema2 {
                 pstmt.setInt(10, dno);
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(4);
                          pstmt.close();
@@ -46,11 +46,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -74,12 +74,12 @@ public class Schema2 {
                 
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(2);
                          pstmt.close();
@@ -87,11 +87,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -113,12 +113,12 @@ public class Schema2 {
                 
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(1);
                          pstmt.close();
@@ -126,11 +126,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -154,12 +154,12 @@ public class Schema2 {
                 
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(2);
                          pstmt.close();
@@ -167,11 +167,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -195,12 +195,12 @@ public class Schema2 {
                 
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(1);
                          pstmt.close();
@@ -208,11 +208,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -236,12 +236,12 @@ public class Schema2 {
 
 
              int affectedRows = pstmt.executeUpdate();
-             System.out.println("Number of affected rows is " + affectedRows);
+             //System.out.println("Number of affected rows is " + affectedRows);
              // check the affected rows 
              if (affectedRows > 0) {
                  // get the ID back
                  try (ResultSet rs = pstmt.getGeneratedKeys()) {
-//                	 System.out.println(rs.next());
+//                	 //System.out.println(rs.next());
                      if (rs.next()) {
                          id = rs.getLong(1);
                          pstmt.close();
@@ -249,11 +249,11 @@ public class Schema2 {
                      }
                  } catch (SQLException ex) {
                 	 ex.printStackTrace();
-                     System.out.println(ex.getMessage());
+                     //System.out.println(ex.getMessage());
                  }
              }
          } catch (SQLException ex) {
-             System.out.println(ex.getMessage());
+             //System.out.println(ex.getMessage());
              ex.printStackTrace();
          }
          return id;
@@ -262,72 +262,91 @@ public class Schema2 {
 	 /////////////////////////////////////////////// Data Population Methods //////////////////////////////////////////////////////////////
 	 @SuppressWarnings("deprecation")
 	public static void populateEmployee(Connection conn) {
-		 for (int i = 1; i < 10000; i++) {
-                String result = "M";
-                if (i > 5000) 
-                	result = "F";
-				if (insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,result,i,i,i, conn) == -1) {
-					System.err.println("insertion of record " + i + " failed");
+		 String result = "M";
+		 int salary;
+         int dno;
+		 for (int i = 0; i < 600; i++)
+		 {
+			 if (insertEmployee("Snape", "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,"M",50000,i,0, conn) == -1) {
+					//System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
+				} 
+					//System.out.println("insertion was successful");
+		 }
+		 insertEmployee("employee1", "M1","employee1", 600, new Date(22,1,1999), "address" + 600 ,"M",600,600,1, conn);
+		 for (int i = 601; i < 16000; i++) {
+                
+                if (i%150 == 0)
+                	dno = 1;
+                else 
+                	dno = i%150;
+                if (i%150 == 5)
+                	salary = 45000;
+                if (i%150 <100)
+                	salary = 41000;
+                else
+                	salary = 0;
+                
+				if (insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,result,salary,i,dno, conn) == -1) {
+					//System.err.println("insertion of record " + i + " failed");
+					break;
+				} 
+					//System.out.println("insertion was successful");
 			}
-		 int i = 10000;
-			insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,"M",i,i,1, conn);
-          i++;
-			insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,"M",i,i,1, conn);
+//		 int i = 10000;
+//			insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,"M",i,i,1, conn);
+//          i++;
+//			insertEmployee("Employee" + i, "M" + i,"Employee" + i, i, new Date(22,1,1999), "address" + i ,"M",i,i,1, conn);
 
 	 }
 	 
-	 @SuppressWarnings("deprecation")
+	 @SuppressWarnings("deprecation")	
 	public static void populateDepartment(Connection conn) {
-		 for (int i = 1; i < 10000; i++) {
+		 for (int i = 0; i < 150; i++) {
 				if (insertDepartment("Department" + i, i,i,new Date(1,1,1990), conn) == -1) {
-					System.err.println("insertion of record " + i + " failed");
+					//System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
+				} 
+					//System.out.println("insertion was successful");
 			}
 	 }
 		public static void populateDeptLocations(Connection conn) {
-			 for (int i = 1; i < 10000; i++) {
+			 for (int i = 0; i < 150; i++) {
 					if (insertDeptLocations(i, "Location" + i, conn) == -1) {
-						System.err.println("insertion of record " + i + " failed");
+						//System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
+					} 
+						//System.out.println("insertion was successful");
 				}
 		 }
 		
 		public static void populateProject(Connection conn) {
-			 for (int i = 1; i < 10000; i++) {
-					if (insertProject("Project" + i, i,"Location1" + i,i, conn) == -1) {
-						System.err.println("insertion of record " + i + " failed");
+			 for (int i = 0; i < 9200; i++) {
+					if (insertProject("Project" + i, i,"Location1" + i,i%150, conn) == -1) {
+						//System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
+					} 
+						//System.out.println("insertion was successful");
 				}
 		 }
 		public static void populateWorksOn(Connection conn) {
-			 for (int i = 1; i < 10000; i++) {
-					if (insertWorksOn(i, i, i, conn) == -1) {
-						System.err.println("insertion of record " + i + " failed");
+			 for (int i = 0; i < 600; i++) {
+					if (insertWorksOn(600, i, i, conn) == -1) {
+						//System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
+					} 
+						//System.out.println("insertion was successful");
 				}
 		 }
 		@SuppressWarnings("deprecation")
 		public static void populateDependent(Connection conn) {
-			 for (int i = 1; i < 10000; i++) {
-				 String result = "F";
-				 if (i > 5000) 
-					 result = "M";
-					if (insertDependent(i, "Name" + i, result,new Date(1,1,1999),"child", conn) == -1) {
-						System.err.println("insertion of record " + i + " failed");
+			 for (int i = 0; i < 600; i++) {
+				 
+					if (insertDependent(i, "Snape", "M",new Date(1,1,1999),"child", conn) == -1) {
+						//System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
+					} 
+						//System.out.println("insertion was successful");
 				}
 		 }
 		
@@ -342,8 +361,7 @@ public class Schema2 {
 		
 	public static void main(String[] argv) {
 
-		System.out.println("-------- PostgreSQL "
-				+ "JDBC Connection Testing ------------");
+		//System.out.println("-------- PostgreSQL "+ "JDBC Connection Testing ------------");
 
 		try {
 
@@ -351,14 +369,13 @@ public class Schema2 {
 
 		} catch (ClassNotFoundException e) {
 
-			System.out.println("Where is your PostgreSQL JDBC Driver? "
-					+ "Include in your library path!");
+			//System.out.println("Where is your PostgreSQL JDBC Driver? "+ "Include in your library path!");
 			e.printStackTrace();
 			return;
 
 		}
 
-		System.out.println("PostgreSQL JDBC Driver Registered!");
+		//System.out.println("PostgreSQL JDBC Driver Registered!");
 
 		Connection connection = null;
 
@@ -372,7 +389,7 @@ public class Schema2 {
 
 		} catch (SQLException e) {
 
-			System.out.println("Connection Failed! Check output console");
+			//System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
 			return;
 
@@ -381,7 +398,7 @@ public class Schema2 {
 		if (connection != null) {
 			System.out.println("You made it, take control your database now!");
 		} else {
-			System.out.println("Failed to make connection!");
+			//System.out.println("Failed to make connection!");
 		}
 	}
 }
