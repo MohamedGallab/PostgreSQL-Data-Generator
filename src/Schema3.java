@@ -196,25 +196,41 @@ public class Schema3 {
 	@SuppressWarnings("deprecation")
 	public static void populateReserves(Connection conn) {
 		Random Num = new Random();
+		
 		for (int i = 0; i < 35000; i++) {
 			int day = Num.nextInt(1, 28);
 			int Month = Num.nextInt(1, 13);
 			int Year = Num.nextInt(1970, 2021);
-			int bid = Num.nextInt(0, 3000);
-			int sid = Num.nextInt(0, 19000);
-			if (i%25==0) {
-				if (insertReserves(sid, 103, new Date(day, Month, Year), conn) == -1) {
+			int bid = 0;
+			int sid = 0;
+			boolean flag=false;
+			
+			if (bid%6==0 && flag) {
+				if (insertReserves(sid, bid++, new Date(day, Month, Year), conn) == -1) {
+					System.err.println("insertion of record " + i + " failed");
+					break;
+				} else
+					System.out.println("insertion was successful");
+				if (insertReserves(sid++, bid++, new Date(day, Month, Year), conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
 					System.out.println("insertion was successful");
 			}else {
-				if (insertReserves(sid, bid, new Date(day, Month, Year), conn) == -1) {
+				if (insertReserves(sid++, bid++, new Date(day, Month, Year), conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
 				} else
 					System.out.println("insertion was successful");	
 			}
+			if (bid==3000) {
+				bid=0;
+			}
+			if (sid==19000) {
+				sid=0;
+			}
+			
+//			
 		}
 	}
 
