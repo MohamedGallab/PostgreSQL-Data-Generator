@@ -354,23 +354,23 @@ public class Schema4 {
 	public static void populateMovie(Connection conn) {
 		for (int i = 1; i <= 100000; i++) {
 			if (i == 6166) {
-				if (insertMovie(i,"Annie Hall", (1990+i%30), (90+i%30), "EN", new Date(22, 1, 1990+i%30), "US", conn) == -1) {
+				if (insertMovie(i, "Annie Hall", (1990 + i % 30), (90 + i % 30), "EN", new Date(22, 1, 1990 + i % 30),
+						"US", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
-			}else if(i == 64209) {
-				if (insertMovie(i,"Eyes Wide Shut", (1990+i%30), (90+i%30), "EN", new Date(22, 1, 1990+i%30), "US", conn) == -1) {
+				} 
+			} else if (i == 64209) {
+				if (insertMovie(i, "Eyes Wide Shut", (1990 + i % 30), (90 + i % 30), "EN",
+						new Date(22, 1, 1990 + i % 30), "US", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
-			}else {
-				if (insertMovie(i,"Movie " + i, (1990+i%30), (90+i%30), "EN", new Date(22, 1, 1990+i%30), "US", conn) == -1) {
+				} 
+			} else {
+				if (insertMovie(i, "Movie " + i, (1990 + i % 30), (90 + i % 30), "EN", new Date(22, 1, 1990 + i % 30),
+						"US", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
+				} 
 			}
 		}
 	}
@@ -381,8 +381,7 @@ public class Schema4 {
 			if (insertReviewer(i, "Name " + i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
 	}
 
@@ -392,8 +391,7 @@ public class Schema4 {
 			if (insertGenres(i, "Genre" + i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
 	}
 
@@ -405,8 +403,7 @@ public class Schema4 {
 			if (insertActor(i, "Actor" + i, "Actor" + i, result, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
 	}
 
@@ -417,14 +414,12 @@ public class Schema4 {
 				if (insertDirector(i, "Woddy", "Allen", conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
-			}else {
+				} 
+			} else {
 				if (insertDirector(i, "Fname " + i, "Lname " + i, conn) == -1) {
 					System.err.println("insertion of record " + i + " failed");
 					break;
-				} else
-					System.out.println("insertion was successful");
+				} 
 			}
 		}
 	}
@@ -434,17 +429,18 @@ public class Schema4 {
 			if (insertMovieDirection(4700, i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
-		
+		int j;
 		for (int i = 351; i <= 100000; i++) {
-		
-			if (insertMovieDirection(i%6000+1, i, conn) == -1) {
+			j=i % 6000 + 1;
+			if(j == 4700) {
+				j++;
+			}
+			if (insertMovieDirection(j, i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
 	}
 
@@ -452,35 +448,31 @@ public class Schema4 {
 		for (int i = 1; i <= 100000; i++) {
 			if (i == 6166) {
 				for (int j = 1; j <= 222; j++) {
-					if (insertMovieCast((i*j)%120000+1, 6166, "role " + (i*j)%100 +1, conn) == -1) {
+					if (insertMovieCast((j * 100), 6166, "role " + (i * j) % 100 + 1, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
+					} 
 				}
-			}else {
-				for (int j = 1; j < i%50 + 150; j++) {
-					if (insertMovieCast((i*j)%120000+1, i, "role " + (i*j)%100 + 1, conn) == -1) {
+			} else {
+				
+					if (insertMovieCast(i, i, "role " + i % 100 + 1, conn) == -1) {
 						System.err.println("insertion of record " + i + " failed");
 						break;
-					} else
-						System.out.println("insertion was successful");
-				}
+					} 
+				
 			}
-			
-			
+
 		}
 	}
 
 	public static void populateMovieGenres(Connection conn) {
 		for (int i = 1; i <= 100000; i++) {
 
-				if (insertMovieGenres(i, i%1000+1, conn) == -1) {
-					System.err.println("insertion of record " + i + " failed");
-					break;
-				} else
-					System.out.println("insertion was successful");
-				
+			if (insertMovieGenres(i, i % 1000 + 1, conn) == -1) {
+				System.err.println("insertion of record " + i + " failed");
+				break;
+			} 
+
 		}
 	}
 
@@ -490,8 +482,7 @@ public class Schema4 {
 			if (insertRating(i, i, i, i, conn) == -1) {
 				System.err.println("insertion of record " + i + " failed");
 				break;
-			} else
-				System.out.println("insertion was successful");
+			} 
 		}
 	}
 
