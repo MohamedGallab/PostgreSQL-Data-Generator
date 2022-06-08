@@ -1,0 +1,57 @@
+Given Query:
+
+
+    No Indicies:
+        "Hash Semi Join  (cost=640.01..1051.27 rows=1001 width=21) (actual time=1.550..3.465 rows=1000 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.009..0.791 rows=19000 loops=1)"
+        "  ->  Hash  (cost=627.50..627.50 rows=1001 width=4) (actual time=1.535..1.535 rows=1000 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 44kB"
+        "        ->  Seq Scan on reserves r  (cost=0.00..627.50 rows=1001 width=4) (actual time=0.006..1.470 rows=1000 loops=1)"
+        "              Filter: (bid = 103)"
+        "              Rows Removed by Filter: 34000"
+        "Planning Time: 0.095 ms"
+        "Execution Time: 3.497 ms"
+
+    Btree:
+        "Hash Semi Join  (cost=231.07..642.34 rows=1001 width=21) (actual time=0.186..1.980 rows=1000 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.008..0.702 rows=19000 loops=1)"
+        "  ->  Hash  (cost=218.56..218.56 rows=1001 width=4) (actual time=0.173..0.175 rows=1000 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 44kB"
+        "        ->  Bitmap Heap Scan on reserves r  (cost=16.05..218.56 rows=1001 width=4) (actual time=0.029..0.111 rows=1000 loops=1)"
+        "              Recheck Cond: (bid = 103)"
+        "              Heap Blocks: exact=6"
+        "              ->  Bitmap Index Scan on rbid  (cost=0.00..15.80 rows=1001 width=0) (actual time=0.022..0.022 rows=1000 loops=1)"
+        "                    Index Cond: (bid = 103)"
+        "Planning Time: 0.106 ms"
+        "Execution Time: 2.031 ms" 
+
+    Hash:
+        "Hash Semi Join  (cost=238.78..650.05 rows=1001 width=21) (actual time=0.198..2.001 rows=1000 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.007..0.700 rows=19000 loops=1)"
+        "  ->  Hash  (cost=226.27..226.27 rows=1001 width=4) (actual time=0.185..0.186 rows=1000 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 44kB"
+        "        ->  Bitmap Heap Scan on reserves r  (cost=23.76..226.27 rows=1001 width=4) (actual time=0.041..0.112 rows=1000 loops=1)"
+        "              Recheck Cond: (bid = 103)"
+        "              Heap Blocks: exact=6"
+        "              ->  Bitmap Index Scan on rbid  (cost=0.00..23.51 rows=1001 width=0) (actual time=0.033..0.034 rows=1000 loops=1)"
+        "                    Index Cond: (bid = 103)"
+        "Planning Time: 0.131 ms"
+        "Execution Time: 2.047 ms"
+
+    Brin:
+        "Hash Semi Join  (cost=10000000652.33..10000001063.59 rows=1001 width=21) (actual time=2.129..4.082 rows=1000 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=10000000000.00..10000000349.00 rows=19000 width=25) (actual time=0.016..0.770 rows=19000 loops=1)"
+        "  ->  Hash  (cost=639.81..639.81 rows=1001 width=4) (actual time=2.103..2.105 rows=1000 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 44kB"
+        "        ->  Bitmap Heap Scan on reserves r  (cost=12.31..639.81 rows=1001 width=4) (actual time=0.022..1.993 rows=1000 loops=1)"
+        "              Recheck Cond: (bid = 103)"
+        "              Rows Removed by Index Recheck: 34000"
+        "              Heap Blocks: lossy=190"
+        "              ->  Bitmap Index Scan on rbid  (cost=0.00..12.06 rows=35000 width=0) (actual time=0.015..0.015 rows=1900 loops=1)"
+        "                    Index Cond: (bid = 103)"
+        "Planning Time: 0.130 ms"
+        "Execution Time: 4.128 ms"

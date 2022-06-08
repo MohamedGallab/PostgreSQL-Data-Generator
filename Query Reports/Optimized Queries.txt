@@ -1,0 +1,133 @@
+1:  (Alternative)
+    select *
+    from
+        (
+        select *
+        from student
+        where 
+        department = 'CSEN'
+        ) as CS1_student
+    full outer join
+        (
+        select *
+        from takes t
+        inner join (select * from section s where semester = 1 and year = 2019) as s on t.section_id = s.section_id 
+        ) as sem1_student 
+    on CS1_student.id = sem1_student.student_id;
+
+2:
+    (select pnumber
+    from project, department d, employee e
+    where e.dno=d.dnumber 
+    and
+    d.mgr_snn=ssn 
+    and 
+    e.lname='employee1' )
+    Union
+    (select pno
+    from works_on, employee
+    where essn=ssn and lname='employee1');
+
+
+3:
+    select lname, fname
+    from employee
+    where salary > (
+    select max(salary)
+    from employee
+    where dno=5 ); 
+
+4:
+    select e.fname, e.lname
+    from employee as e inner join dependent as d on e.ssn = d.essn
+    where e.fname = d.dependent_name and e.sex = d.sex
+
+5:
+    create MATERIALIZED VIEW q5 as
+    select distinct e.*
+    from employee e, dependent d
+    where ssn=essn;
+
+    select * from q5;
+
+
+6:  
+    select dno, count(ssn)
+    from employee
+    where salary > 40000
+    group by dno
+    having count(ssn)>5
+    order by dno
+
+7:  (Alternative)
+    select s.sname
+    from sailors s, reserves r
+    where r.sid = s.sid and r.bid = 103
+
+8:  (Alternative)
+    select s.sname
+    from sailors s
+    where s.sid = any ( select r.sid
+    from reserves r
+    where r. bid = any (select b.bid
+    from boat b
+    where b.color = 'red'));
+
+9:  (Alternative)
+    select s.sname
+    from sailors s, reserves r, boat b
+    where s.sid = r.sid and r.bid = b.bid and b.color = 'red' and s.sid = any
+        ( select s2.sid
+        from sailors s2, boat b2, reserves r2
+        where s2.sid = r2.sid 
+        and 
+        r2.bid = b2.bid
+        and 
+        b2.color = 'green');
+
+10: violation
+    select *
+    from actor
+    where act_id 
+        in (
+        select act_id
+        from movie_cast
+        where mov_id 
+            = (
+            select mov_id
+            from movie
+            where mov_title ='Annie Hall'));
+
+11: violation 2.0
+    select dir_fname, dir_lname
+    from director
+    where dir_id in
+    (
+        select dir_id
+        from movie_direction
+        where mov_id in
+            (
+            select mov_id
+            from movie_cast
+            where role = 
+                any(select role
+                from movie_cast
+                where mov_id =
+                    (
+                    select mov_id
+                    from movie
+                    where
+                    mov_title='Eyes Wide Shut')))); 
+
+12: (Alternative)
+    select mov_title 
+    from   movie 
+    where  mov_id = any (
+    select mov_id 
+    from movie_direction 
+    where dir_id = any
+    (select dir_id 
+    from director 
+    where dir_fname='Woddy'
+    and 
+    dir_lname='Allen'));

@@ -1,0 +1,19 @@
+Given Query:
+
+
+    No Indicies:
+        "Hash Semi Join  (cost=839.43..1303.20 rows=5833 width=21) (actual time=4.506..6.802 rows=5669 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.010..0.786 rows=19000 loops=1)"
+        "  ->  Hash  (cost=766.52..766.52 rows=5833 width=4) (actual time=4.472..4.474 rows=5669 loops=1)"
+        "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
+        "        ->  Hash Semi Join  (cost=69.75..766.52 rows=5833 width=4) (actual time=0.377..3.962 rows=5669 loops=1)"
+        "              Hash Cond: (r.bid = b.bid)"
+        "              ->  Seq Scan on reserves r  (cost=0.00..540.00 rows=35000 width=8) (actual time=0.006..1.470 rows=35000 loops=1)"
+        "              ->  Hash  (cost=63.50..63.50 rows=500 width=4) (actual time=0.280..0.281 rows=500 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 26kB"
+        "                    ->  Seq Scan on boat b  (cost=0.00..63.50 rows=500 width=4) (actual time=0.008..0.240 rows=500 loops=1)"
+        "                          Filter: (color = 'red'::bpchar)"
+        "                          Rows Removed by Filter: 2500"
+        "Planning Time: 0.246 ms"
+        "Execution Time: 6.966 ms"
