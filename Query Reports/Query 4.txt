@@ -1,0 +1,44 @@
+Given Query:
+
+    No Indicies:
+        "Seq Scan on employee e  (cost=0.00..140463.00 rows=8000 width=42) (actual time=0.017..730.947 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Seq Scan on dependent d  (cost=0.00..16.00 rows=600 width=4) (actual time=0.041..0.042 rows=11 loops=16000)"
+        "          Filter: ((e.fname = dependent_name) AND (e.sex = sex))"
+        "          Rows Removed by Filter: 578"
+        "Planning Time: 0.110 ms"
+        "Execution Time: 730.995 ms"
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+        "Hash Join  (cost=23.50..626.73 rows=23 width=42) (actual time=0.135..2.911 rows=600 loops=1)"
+        "  Hash Cond: ((e.ssn = d.essn) AND (e.fname = d.dependent_name) AND (e.sex = d.sex))"
+        "  ->  Seq Scan on employee e  (cost=0.00..423.00 rows=16000 width=48) (actual time=0.008..0.758 rows=16000 loops=1)"
+        "  ->  Hash  (cost=13.00..13.00 rows=600 width=27) (actual time=0.122..0.123 rows=600 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 43kB"
+        "        ->  Seq Scan on dependent d  (cost=0.00..13.00 rows=600 width=27) (actual time=0.006..0.049 rows=600 loops=1)"
+        "Planning Time: 0.125 ms"
+        "Execution Time: 2.941 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+        
+Used Indicies:
+
+
+Discussion:

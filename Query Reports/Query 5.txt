@@ -1,0 +1,44 @@
+Given Query:
+
+    No Indicies:
+        "Hash Semi Join  (cost=20.50..492.18 rows=600 width=96) (actual time=0.105..1.908 rows=600 loops=1)"
+        "  Hash Cond: (employee.ssn = dependent.essn)"
+        "  ->  Seq Scan on employee  (cost=0.00..423.00 rows=16000 width=96) (actual time=0.009..0.721 rows=16000 loops=1)"
+        "  ->  Hash  (cost=13.00..13.00 rows=600 width=4) (actual time=0.091..0.092 rows=600 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 30kB"
+        "        ->  Seq Scan on dependent  (cost=0.00..13.00 rows=600 width=4) (actual time=0.007..0.047 rows=600 loops=1)"
+        "Planning Time: 0.097 ms"
+        "Execution Time: 1.938 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+        "Hash Semi Join  (cost=16.50..488.18 rows=600 width=96) (actual time=0.142..1.924 rows=600 loops=1)"
+        "  Hash Cond: (employee.ssn = hasdependants.essn)"
+        "  ->  Seq Scan on employee  (cost=0.00..423.00 rows=16000 width=96) (actual time=0.010..0.672 rows=16000 loops=1)"
+        "  ->  Hash  (cost=9.00..9.00 rows=600 width=4) (actual time=0.108..0.109 rows=600 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 30kB"
+        "        ->  Seq Scan on hasdependants  (cost=0.00..9.00 rows=600 width=4) (actual time=0.027..0.060 rows=600 loops=1)"
+        "Planning Time: 0.131 ms"
+        "Execution Time: 1.959 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+        
+Used Indicies:
+
+
+Discussion:

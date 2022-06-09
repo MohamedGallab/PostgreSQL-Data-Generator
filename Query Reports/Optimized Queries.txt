@@ -42,48 +42,28 @@
     from employee as e inner join dependent as d on e.ssn = d.essn
     where e.fname = d.dependent_name and e.sex = d.sex
 
-5:
-    create MATERIALIZED VIEW q5 as
-    select distinct e.*
-    from employee e, dependent d
-    where ssn=essn;
-
-    select * from q5;
+5:  
+    select * from employee
+    where ssn in ( select * from hasDependants);
 
 
 6:  
-    select dno, count(ssn)
+    select dno as dnumber, count(ssn)
     from employee
     where salary > 40000
     group by dno
     having count(ssn)>5
-    order by dno
 
-7:  (Alternative)
-    select s.sname
-    from sailors s, reserves r
-    where r.sid = s.sid and r.bid = 103
+7:  
+    select sname from schema3join where bid = 103;
 
-8:  (Alternative)
-    select s.sname
-    from sailors s
-    where s.sid = any ( select r.sid
-    from reserves r
-    where r. bid = any (select b.bid
-    from boat b
-    where b.color = 'red'));
+8:  
+    select sname from schema3join where color = 'red';
 
-9:  (Alternative)
-    select s.sname
-    from sailors s, reserves r, boat b
-    where s.sid = r.sid and r.bid = b.bid and b.color = 'red' and s.sid = any
-        ( select s2.sid
-        from sailors s2, boat b2, reserves r2
-        where s2.sid = r2.sid 
-        and 
-        r2.bid = b2.bid
-        and 
-        b2.color = 'green');
+9:
+    (select sname from schema3join where color = 'red')
+    INTERSECT
+    (select sname from schema3join where color = 'green')
 
 10: violation
     select *
@@ -125,7 +105,7 @@
     where  mov_id = any (
     select mov_id 
     from movie_direction 
-    where dir_id = any
+    where dir_id =
     (select dir_id 
     from director 
     where dir_fname='Woddy'

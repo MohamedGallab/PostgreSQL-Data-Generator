@@ -61,9 +61,14 @@
             on CS1_student.id = sem1_student.student_id;
 
     Schema 2:
-        create MATERIALIZED VIEW q5 as
-        select distinct e.*
+        create MATERIALIZED VIEW hasDependants as
+        select distinct d.essn
         from employee e, dependent d
         where ssn=essn;
 
-        select * from q5;
+    Schema 3:
+        create MATERIALIZED VIEW schema3join as
+        select sailors.*, reserves.bid, reserves."day", boat.bname, boat.color
+        from sailors
+        inner join reserves on sailors.sid = reserves.sid
+        inner join boat on boat.bid = reserves.bid

@@ -1,0 +1,48 @@
+Given Query:
+
+    No Indicies:
+        "Seq Scan on employee  (cost=0.00..3710643.00 rows=8000 width=42) (actual time=1.281..7.171 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Materialize  (cost=0.00..463.51 rows=103 width=4) (actual time=0.000..0.000 rows=5 loops=16000)"
+        "          ->  Seq Scan on employee employee_1  (cost=0.00..463.00 rows=103 width=4) (actual time=0.046..1.247 rows=103 loops=1)"
+        "                Filter: (dno = 5)"
+        "                Rows Removed by Filter: 15897"
+        "Planning Time: 0.086 ms"
+        "Execution Time: 7.203 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+        "Seq Scan on employee  (cost=463.27..926.27 rows=5333 width=42) (actual time=1.289..2.369 rows=600 loops=1)"
+        "  Filter: (salary > $0)"
+        "  Rows Removed by Filter: 15400"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Aggregate  (cost=463.26..463.27 rows=1 width=4) (actual time=1.276..1.276 rows=1 loops=1)"
+        "          ->  Seq Scan on employee employee_1  (cost=0.00..463.00 rows=103 width=4) (actual time=0.049..1.267 rows=103 loops=1)"
+        "                Filter: (dno = 5)"
+        "                Rows Removed by Filter: 15897"
+        "Planning Time: 0.120 ms"
+        "Execution Time: 2.400 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+        
+Used Indicies:
+
+
+Discussion:

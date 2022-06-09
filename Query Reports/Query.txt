@@ -1,0 +1,24 @@
+Given Query:
+
+    No Indicies:
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+        

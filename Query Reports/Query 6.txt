@@ -1,0 +1,60 @@
+Given Query:
+
+    No Indicies:
+        "HashAggregate  (cost=1068.90..1070.40 rows=150 width=12) (actual time=6.353..6.363 rows=100 loops=1)"
+        "  Group Key: department.dnumber"
+        "  Batches: 1  Memory Usage: 48kB"
+        "  ->  Hash Join  (cost=510.53..1050.73 rows=3633 width=4) (actual time=2.756..5.456 rows=10900 loops=1)"
+        "        Hash Cond: (employee.dno = department.dnumber)"
+        "        ->  Seq Scan on employee  (cost=0.00..463.00 rows=10899 width=4) (actual time=0.011..1.522 rows=10900 loops=1)"
+        "              Filter: (salary > 40)"
+        "              Rows Removed by Filter: 5100"
+        "        ->  Hash  (cost=509.90..509.90 rows=50 width=8) (actual time=2.739..2.741 rows=150 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 14kB"
+        "              ->  Hash Join  (cost=506.00..509.90 rows=50 width=8) (actual time=2.701..2.725 rows=150 loops=1)"
+        "                    Hash Cond: (department.dnumber = employee_1.dno)"
+        "                    ->  Seq Scan on department  (cost=0.00..3.50 rows=150 width=4) (actual time=0.005..0.011 rows=150 loops=1)"
+        "                    ->  Hash  (cost=505.38..505.38 rows=50 width=4) (actual time=2.689..2.690 rows=150 loops=1)"
+        "                          Buckets: 1024  Batches: 1  Memory Usage: 14kB"
+        "                          ->  HashAggregate  (cost=503.00..504.88 rows=50 width=4) (actual time=2.660..2.672 rows=150 loops=1)"
+        "                                Group Key: employee_1.dno"
+        "                                Filter: (count(*) > 5)"
+        "                                Batches: 1  Memory Usage: 48kB"
+        "                                ->  Seq Scan on employee employee_1  (cost=0.00..423.00 rows=16000 width=4) (actual time=0.003..0.692 rows=16000 loops=1)"
+        "Planning Time: 0.170 ms"
+        "Execution Time: 6.413 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+        "HashAggregate  (cost=517.50..519.37 rows=50 width=12) (actual time=2.512..2.523 rows=100 loops=1)"
+        "  Group Key: dno"
+        "  Filter: (count(ssn) > 5)"
+        "  Batches: 1  Memory Usage: 48kB"
+        "  ->  Seq Scan on employee  (cost=0.00..463.00 rows=10899 width=8) (actual time=0.010..1.462 rows=10899 loops=1)"
+        "        Filter: (salary > 40000)"
+        "        Rows Removed by Filter: 5101"
+        "Planning Time: 0.076 ms"
+        "Execution Time: 2.557 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+    
+        
+Used Indicies:
+
+
+Discussion:
