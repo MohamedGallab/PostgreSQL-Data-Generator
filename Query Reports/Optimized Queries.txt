@@ -61,7 +61,7 @@
     INTERSECT
     (select sname from schema3join where color = 'green')
 
-10: violation
+10:
     select *
     from actor
     where act_id 
@@ -74,7 +74,7 @@
             from movie
             where mov_title ='Annie Hall'));
 
-11: violation 2.0
+11:
     select dir_fname, dir_lname
     from director
     where dir_id in
@@ -95,15 +95,7 @@
                     where
                     mov_title='Eyes Wide Shut')))); 
 
-12: (Alternative)
+12: 
     select mov_title 
-    from   movie 
-    where  mov_id = any (
-    select mov_id 
-    from movie_direction 
-    where dir_id =
-    (select dir_id 
-    from director 
-    where dir_fname='Woddy'
-    and 
-    dir_lname='Allen'));
+    from   mdirection
+    where dir_fname='Woddy' and  dir_lname='Allen'
