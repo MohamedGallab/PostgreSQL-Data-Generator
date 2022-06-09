@@ -1,0 +1,76 @@
+Given Query:
+
+    No Indicies:
+        "Hash Full Join  (cost=1208.34..2523.69 rows=1131 width=65) (actual time=9.854..18.199 rows=1749 loops=1)"
+        "  Hash Cond: (student.id = t.student_id)"
+        "  ->  Seq Scan on student  (cost=0.00..1311.00 rows=1131 width=25) (actual time=0.029..8.007 rows=1100 loops=1)"
+        "        Filter: ((department)::text = 'CSEN'::text)"
+        "        Rows Removed by Filter: 64900"
+        "  ->  Hash  (cost=1200.09..1200.09 rows=660 width=40) (actual time=9.814..9.817 rows=660 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 55kB"
+        "        ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.055..9.586 rows=660 loops=1)"
+        "              Hash Cond: (t.section_id = s.section_id)"
+        "              ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.021..3.997 rows=65999 loops=1)"
+        "              ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.025..0.026 rows=1 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                    ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.013..0.021 rows=1 loops=1)"
+        "                          Filter: ((semester = 1) AND (year = 2019))"
+        "                          Rows Removed by Filter: 99"
+        "Planning Time: 0.419 ms"
+        "Execution Time: 18.326 ms"
+
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Optimized Query:
+
+    No Indicies:
+        "Hash Full Join  (cost=36.26..1236.43 rows=1100 width=64) (actual time=0.236..9.361 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.032..8.793 rows=660 loops=1)"
+        "        Hash Cond: (t.section_id = s.section_id)"
+        "        ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.007..3.712 rows=65999 loops=1)"
+        "        ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.019..0.020 rows=1 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.008..0.014 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "  ->  Hash  (cost=20.00..20.00 rows=1100 width=24) (actual time=0.196..0.197 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Seq Scan on csenstudents  (cost=0.00..20.00 rows=1100 width=24) (actual time=0.009..0.064 rows=1100 loops=1)"
+        "Planning Time: 0.216 ms"
+        "Execution Time: 9.492 ms"
+    Btree:
+
+    Hash:
+
+    Brin:
+
+    Mixed:
+
+Used Indicies:
+
+    Btree:
+
+        comment:
+
+    Hash:
+
+        comment:
+
+    Brin:
+
+        comment:
+
+    Mixed:
+    
+        comment:
+        
+Discussion:
+
+        
