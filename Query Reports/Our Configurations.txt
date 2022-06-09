@@ -61,3 +61,10 @@
         from sailors
         inner join reserves on sailors.sid = reserves.sid
         inner join boat on boat.bid = reserves.bid
+
+    Schema 4:
+        create MATERIALIZED VIEW Mdirection as
+        select m.*, d.*
+        from movie m 
+        inner join movie_direction md on m.mov_id = md.mov_id
+        inner join director d on d.dir_id = md.dir_id
