@@ -21,4 +21,25 @@ Optimized Query:
     Brin:
 
     Mixed:
+
+Used Indicies:
+
+    Btree:
+
+        comment:
+
+    Hash:
+
+        comment:
+
+    Brin:
+
+        comment:
+
+    Mixed:
+    
+        comment:
+        
+Discussion:
+
         

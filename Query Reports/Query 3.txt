@@ -44,5 +44,20 @@ Optimized Query:
         
 Used Indicies:
 
+    Btree:
 
+        comment:
+
+    Hash:
+
+        comment:
+
+    Brin:
+
+        comment:
+
+    Mixed:
+    
+        comment:
+        
 Discussion:
