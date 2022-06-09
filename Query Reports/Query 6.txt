@@ -58,18 +58,18 @@ Used Indicies:
 
     Btree:
 
-        comment:
+            comment:
 
     Hash:
 
-        comment:
+            comment:
 
     Brin:
 
-        comment:
+            comment:
 
     Mixed:
     
-        comment:
+            comment:
         
 Discussion:

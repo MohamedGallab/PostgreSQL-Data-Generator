@@ -13,12 +13,67 @@ Given Query:
         "Execution Time: 7.203 ms"
 
     Btree:
+        "Gather  (cost=1000.82..33555.64 rows=8000 width=42) (actual time=0.321..26.547 rows=600 loops=1)"
+        "  Workers Planned: 1"
+        "  Workers Launched: 1"
+        "  ->  Parallel Index Only Scan using emp_sal_bt on employee  (cost=0.82..31755.64 rows=4706 width=42) (actual time=0.029..2.982 rows=300 loops=2)"
+        "        Filter: (SubPlan 1)"
+        "        Rows Removed by Filter: 7700"
+        "        Heap Fetches: 0"
+        "        SubPlan 1"
+        "          ->  Materialize  (cost=0.41..6.73 rows=103 width=4) (actual time=0.000..0.000 rows=5 loops=16000)"
+        "                ->  Index Only Scan using emp_sal_bt on employee employee_1  (cost=0.41..6.21 rows=103 width=4) (actual time=0.011..0.018 rows=103 loops=1)"
+        "                      Index Cond: (dno = 5)"
+        "                      Heap Fetches: 0"
+        "Planning Time: 0.648 ms"
+        "Execution Time: 26.589 ms"
 
     Hash:
+        "Seq Scan on employee  (cost=4.80..1600032.86 rows=8000 width=42) (actual time=0.175..6.290 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Materialize  (cost=4.80..204.49 rows=103 width=4) (actual time=0.000..0.000 rows=5 loops=16000)"
+        "          ->  Bitmap Heap Scan on employee employee_1  (cost=4.80..203.97 rows=103 width=4) (actual time=0.020..0.152 rows=103 loops=1)"
+        "                Recheck Cond: (dno = 5)"
+        "                Heap Blocks: exact=103"
+        "                ->  Bitmap Index Scan on emp_dno_hash  (cost=0.00..4.77 rows=103 width=0) (actual time=0.009..0.009 rows=103 loops=1)"
+        "                      Index Cond: (dno = 5)"
+        "Planning Time: 0.126 ms"
+        "Execution Time: 6.321 ms"
 
     Brin:
+        "Seq Scan on employee  (cost=10000000012.09..10003626655.09 rows=8000 width=42) (actual time=1.488..7.652 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Materialize  (cost=12.09..465.11 rows=103 width=4) (actual time=0.000..0.000 rows=5 loops=16000)"
+        "          ->  Bitmap Heap Scan on employee employee_1  (cost=12.09..464.59 rows=103 width=4) (actual time=0.078..1.463 rows=103 loops=1)"
+        "                Recheck Cond: (dno = 5)"
+        "                Rows Removed by Index Recheck: 15897"
+        "                Heap Blocks: lossy=263"
+        "                ->  Bitmap Index Scan on emp_dno_brin  (cost=0.00..12.07 rows=15160 width=0) (actual time=0.013..0.013 rows=2630 loops=1)"
+        "                      Index Cond: (dno = 5)"
+        "Planning Time: 0.949 ms"
+        "Execution Time: 7.689 ms"
 
     Mixed:
+        "Gather  (cost=1005.21..943467.48 rows=8000 width=42) (actual time=2.424..133.084 rows=600 loops=1)"
+        "  Workers Planned: 1"
+        "  Workers Launched: 1"
+        "  ->  Parallel Index Only Scan using mixed on employee  (cost=5.21..941667.48 rows=4706 width=42) (actual time=1.101..3.794 rows=300 loops=2)"
+        "        Filter: (SubPlan 1)"
+        "        Rows Removed by Filter: 7700"
+        "        Heap Fetches: 0"
+        "        SubPlan 1"
+        "          ->  Materialize  (cost=4.80..204.49 rows=103 width=4) (actual time=0.000..0.000 rows=5 loops=16000)"
+        "                ->  Bitmap Heap Scan on employee employee_1  (cost=4.80..203.97 rows=103 width=4) (actual time=0.029..0.113 rows=103 loops=1)"
+        "                      Recheck Cond: (dno = 5)"
+        "                      Heap Blocks: exact=103"
+        "                      ->  Bitmap Index Scan on emp_dno_hash  (cost=0.00..4.77 rows=103 width=0) (actual time=0.017..0.018 rows=103 loops=1)"
+        "                            Index Cond: (dno = 5)"
+        "Planning Time: 1.620 ms"
+        "Execution Time: 133.139 ms"
 
 Optimized Query:
 
@@ -35,29 +90,110 @@ Optimized Query:
         "Execution Time: 2.400 ms"
 
     Btree:
+        "Seq Scan on employee  (cost=0.48..463.48 rows=5333 width=42) (actual time=0.022..1.261 rows=600 loops=1)"
+        "  Filter: (salary > $1)"
+        "  Rows Removed by Filter: 15400"
+        "  InitPlan 2 (returns $1)"
+        "    ->  Result  (cost=0.47..0.48 rows=1 width=4) (actual time=0.015..0.016 rows=1 loops=1)"
+        "          InitPlan 1 (returns $0)"
+        "            ->  Limit  (cost=0.41..0.47 rows=1 width=4) (actual time=0.014..0.014 rows=1 loops=1)"
+        "                  ->  Index Only Scan Backward using emp_sal_bt on employee employee_1  (cost=0.41..6.47 rows=103 width=4) (actual time=0.013..0.013 rows=1 loops=1)"
+        "                        Index Cond: ((dno = 5) AND (salary IS NOT NULL))"
+        "                        Heap Fetches: 0"
+        "Planning Time: 0.799 ms"
+        "Execution Time: 1.287 ms"
 
     Hash:
+        "Seq Scan on employee  (cost=204.24..667.24 rows=5333 width=42) (actual time=0.095..1.182 rows=600 loops=1)"
+        "  Filter: (salary > $0)"
+        "  Rows Removed by Filter: 15400"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Aggregate  (cost=204.23..204.24 rows=1 width=4) (actual time=0.089..0.090 rows=1 loops=1)"
+        "          ->  Bitmap Heap Scan on employee employee_1  (cost=4.80..203.97 rows=103 width=4) (actual time=0.019..0.084 rows=103 loops=1)"
+        "                Recheck Cond: (dno = 5)"
+        "                Heap Blocks: exact=103"
+        "                ->  Bitmap Index Scan on emp_dno_hash  (cost=0.00..4.77 rows=103 width=0) (actual time=0.009..0.009 rows=103 loops=1)"
+        "                      Index Cond: (dno = 5)"
+        "Planning Time: 0.152 ms"
+        "Execution Time: 1.213 ms"
 
     Brin:
+        "Bitmap Heap Scan on employee  (cost=476.66..911.01 rows=5333 width=42) (actual time=1.190..1.366 rows=600 loops=1)"
+        "  Recheck Cond: (salary > $0)"
+        "  Rows Removed by Index Recheck: 1352"
+        "  Heap Blocks: lossy=32"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Aggregate  (cost=463.26..463.27 rows=1 width=4) (actual time=1.164..1.165 rows=1 loops=1)"
+        "          ->  Seq Scan on employee employee_1  (cost=0.00..463.00 rows=103 width=4) (actual time=0.056..1.157 rows=103 loops=1)"
+        "                Filter: (dno = 5)"
+        "                Rows Removed by Filter: 15897"
+        "  ->  Bitmap Index Scan on emp_sal_brin  (cost=0.00..12.06 rows=13708 width=0) (actual time=1.185..1.185 rows=320 loops=1)"
+        "        Index Cond: (salary > $0)"
+        "Planning Time: 1.078 ms"
+        "Execution Time: 1.404 ms"
 
     Mixed:
+        "Bitmap Heap Scan on employee  (cost=13.87..448.22 rows=5333 width=42) (actual time=0.026..0.204 rows=600 loops=1)"
+        "  Recheck Cond: (salary > $1)"
+        "  Rows Removed by Index Recheck: 1352"
+        "  Heap Blocks: lossy=32"
+        "  InitPlan 2 (returns $1)"
+        "    ->  Result  (cost=0.47..0.48 rows=1 width=4) (actual time=0.010..0.010 rows=1 loops=1)"
+        "          InitPlan 1 (returns $0)"
+        "            ->  Limit  (cost=0.41..0.47 rows=1 width=4) (actual time=0.009..0.009 rows=1 loops=1)"
+        "                  ->  Index Only Scan Backward using emp_sal_bt on employee employee_1  (cost=0.41..6.47 rows=103 width=4) (actual time=0.008..0.008 rows=1 loops=1)"
+        "                        Index Cond: ((dno = 5) AND (salary IS NOT NULL))"
+        "                        Heap Fetches: 0"
+        "  ->  Bitmap Index Scan on emp_sal_brin  (cost=0.00..12.06 rows=13708 width=0) (actual time=0.022..0.022 rows=320 loops=1)"
+        "        Index Cond: (salary > $1)"
+        "Planning Time: 1.638 ms"
+        "Execution Time: 0.234 ms"
         
 Used Indicies:
 
     Btree:
+        CREATE INDEX IF NOT EXISTS emp_sal_bt
+        ON public.employee USING btree
+        (dno ASC NULLS LAST, salary ASC NULLS LAST, lname COLLATE pg_catalog."default" ASC NULLS LAST, fname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
 
-        comment:
+            comment: uses covering btree to improve cost
 
     Hash:
+        CREATE INDEX IF NOT EXISTS emp_dno_hash
+        ON public.employee USING hash
+        (dno)
+        TABLESPACE pg_default;
 
-        comment:
+        CREATE INDEX IF NOT EXISTS emp_sal_hash
+        ON public.employee USING hash
+        (salary)
+        TABLESPACE pg_default;
+
+            comment: both queries need different coloumns in their hash index.
 
     Brin:
+        CREATE INDEX emp_sal_brin
+        ON public.employee USING brin
+        (salary) with (pages_per_range = 32);
 
-        comment:
+        CREATE INDEX emp_dno_brin
+        ON public.employee USING brin
+        (dno) with (pages_per_range = 32);
+
+            comment: again the brin index proves it is a bad choice and its cost is worse
+            than a normal seq scan in the old query and marginaly better in the new query
 
     Mixed:
+        CREATE INDEX IF NOT EXISTS mixed
+        ON public.employee USING btree
+        (salary ASC NULLS LAST, lname COLLATE pg_catalog."default" ASC NULLS LAST, fname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
     
-        comment:
+            comment: the old query uses a hash index for the 'dno = 5' then the mixed btree
+            for the rest of the query while the new query employs the original btree and 
+            the brin index
         
 Discussion:
+    using "max" instead of "all" saved time instead of comparing with the whole table so
+    we only find the max and compare with that.

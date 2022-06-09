@@ -10,11 +10,41 @@ Given Query:
         "          Rows Removed by Filter: 578"
         "Planning Time: 0.110 ms"
         "Execution Time: 730.995 ms"
+
     Btree:
+        "Seq Scan on employee e  (cost=10000000000.00..10000317863.00 rows=8000 width=42) (actual time=0.015..43.753 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Index Scan using dep_bt on dependent d  (cost=0.15..38.02 rows=600 width=4) (actual time=0.001..0.002 rows=11 loops=16000)"
+        "          Index Cond: ((sex = e.sex) AND (dependent_name = e.fname))"
+        "Planning Time: 0.157 ms"
+        "Execution Time: 43.784 ms"
 
     Hash:
+        "Seq Scan on employee e  (cost=10000000000.00..10000492463.00 rows=8000 width=42) (actual time=0.095..41.910 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Index Scan using dep_hash on dependent d  (cost=0.00..60.00 rows=600 width=4) (actual time=0.000..0.002 rows=11 loops=16000)"
+        "          Index Cond: (dependent_name = e.fname)"
+        "          Filter: (e.sex = sex)"
+        "Planning Time: 0.209 ms"
+        "Execution Time: 41.962 ms"
 
     Brin:
+        "Seq Scan on employee e  (cost=10000000000.00..10000334991.00 rows=8000 width=42) (actual time=0.035..150.196 rows=600 loops=1)"
+        "  Filter: (SubPlan 1)"
+        "  Rows Removed by Filter: 15400"
+        "  SubPlan 1"
+        "    ->  Bitmap Heap Scan on dependent d  (cost=12.16..28.16 rows=600 width=4) (actual time=0.005..0.006 rows=11 loops=16000)"
+        "          Recheck Cond: (e.fname = dependent_name)"
+        "          Filter: (e.sex = sex)"
+        "          Heap Blocks: lossy=2163"
+        "          ->  Bitmap Index Scan on dep_name_brin  (cost=0.00..12.01 rows=600 width=0) (actual time=0.005..0.005 rows=3 loops=16000)"
+        "                Index Cond: (dependent_name = e.fname)"
+        "Planning Time: 0.137 ms"
+        "Execution Time: 161.497 ms"
 
     Mixed:
 
@@ -31,29 +61,82 @@ Optimized Query:
         "Execution Time: 2.941 ms"
 
     Btree:
+        "Nested Loop  (cost=0.44..1673.52 rows=23 width=42) (actual time=0.016..2.286 rows=600 loops=1)"
+        "  ->  Index Scan using dep_bt on dependent d  (cost=0.15..35.02 rows=600 width=27) (actual time=0.006..0.082 rows=600 loops=1)"
+        "  ->  Index Scan using emp_sex_bt on employee e  (cost=0.29..2.72 rows=1 width=48) (actual time=0.003..0.003 rows=1 loops=600)"
+        "        Index Cond: ((fname = d.dependent_name) AND (sex = d.sex) AND (ssn = d.essn))"
+        "Planning Time: 0.246 ms"
+        "Execution Time: 2.323 ms"
 
     Hash:
+        "Nested Loop  (cost=10000000000.00..10000000987.00 rows=23 width=42) (actual time=0.027..6.517 rows=600 loops=1)"
+        "  ->  Seq Scan on employee e  (cost=10000000000.00..10000000423.00 rows=16000 width=48) (actual time=0.018..0.687 rows=16000 loops=1)"
+        "  ->  Index Scan using dep_ssn_hash on dependent d  (cost=0.00..0.03 rows=1 width=27) (actual time=0.000..0.000 rows=0 loops=16000)"
+        "        Index Cond: (essn = e.ssn)"
+        "        Filter: ((e.fname = dependent_name) AND (e.sex = sex))"
+        "Planning Time: 0.266 ms"
+        "Execution Time: 6.540 ms"
 
     Brin:
+        "Nested Loop  (cost=10000192000.01..13072232715.00 rows=23 width=42) (actual time=0.073..131.014 rows=600 loops=1)"
+        "  ->  Seq Scan on employee e  (cost=10000000000.00..10000000423.00 rows=16000 width=48) (actual time=0.015..1.032 rows=16000 loops=1)"
+        "  ->  Bitmap Heap Scan on dependent d  (cost=192000.01..192014.51 rows=1 width=27) (actual time=0.005..0.006 rows=0 loops=16000)"
+        "        Recheck Cond: (essn = e.ssn)"
+        "        Rows Removed by Index Recheck: 22"
+        "        Filter: ((e.fname = dependent_name) AND (e.sex = sex))"
+        "        Heap Blocks: lossy=4200"
+        "        ->  Bitmap Index Scan on dep_ssn_brin  (cost=0.00..192000.01 rows=600 width=0) (actual time=0.004..0.004 rows=3 loops=16000)"
+        "              Index Cond: (essn = e.ssn)"
+        "Planning Time: 0.221 ms"
+        "Execution Time: 141.892 ms"
 
     Mixed:
         
 Used Indicies:
 
     Btree:
+        CREATE INDEX IF NOT EXISTS dep_bt
+        ON public.dependent USING btree
+        (sex COLLATE pg_catalog."default" ASC NULLS LAST, dependent_name COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
 
-        comment:
+        CREATE INDEX IF NOT EXISTS emp_sex_bt
+        ON public.employee USING btree
+        (fname COLLATE pg_catalog."default" ASC NULLS LAST, sex COLLATE pg_catalog."default" ASC NULLS LAST, ssn ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+            comment: since the old query does a join only, using an index is pointless so I have to
+            force the query planner to not use seq scan. both queries perform worse with indicies
 
     Hash:
+        CREATE INDEX IF NOT EXISTS dep_hash
+        ON public.dependent USING hash
+        (dependent_name COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
 
-        comment:
+        CREATE INDEX IF NOT EXISTS dep_ssn_hash
+        ON public.dependent USING hash
+        (essn)
+        TABLESPACE pg_default;
+
+            comment: again indicies are bad for joins so the costs are much worse.
 
     Brin:
+        CREATE INDEX dep_name_brin
+        ON public.dependent USING brin
+        (dependent_name )with (pages_per_range = 32);
 
-        comment:
+        CREATE INDEX dep_ssn_brin
+        ON public.dependent USING brin
+        (essn )with (pages_per_range = 32);
+
+            comment: again the queries are just trying to join so the costs turn out worse.
 
     Mixed:
     
-        comment:
+            comment: can't use mix indicies because there is only 1 operation that can use
+            and index and the other has to be a seq scan to do the join.
         
 Discussion:
+    the new query is more optimized as it has to do the join only once so
+    it is faster than doing 2 joins as the old query did.

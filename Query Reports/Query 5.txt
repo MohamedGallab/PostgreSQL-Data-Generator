@@ -11,12 +11,50 @@ Given Query:
         "Execution Time: 1.938 ms"
 
     Btree:
+        "Merge Semi Join  (cost=40.97..77.35 rows=600 width=96) (actual time=0.108..0.290 rows=600 loops=1)"
+        "  Merge Cond: (employee.ssn = dependent.essn)"
+        "  ->  Index Scan using emp_ssn_bt on employee  (cost=0.29..690.28 rows=16000 width=96) (actual time=0.004..0.055 rows=601 loops=1)"
+        "  ->  Sort  (cost=40.69..42.19 rows=600 width=4) (actual time=0.101..0.115 rows=600 loops=1)"
+        "        Sort Key: dependent.essn"
+        "        Sort Method: quicksort  Memory: 53kB"
+        "        ->  Seq Scan on dependent  (cost=0.00..13.00 rows=600 width=4) (actual time=0.006..0.048 rows=600 loops=1)"
+        "Planning Time: 0.387 ms"
+        "Execution Time: 0.317 ms"
 
     Hash:
+        "Nested Loop  (cost=10000000014.50..10000001353.00 rows=600 width=96) (actual time=0.115..0.740 rows=600 loops=1)"
+        "  ->  HashAggregate  (cost=10000000014.50..10000000020.50 rows=600 width=4) (actual time=0.105..0.147 rows=600 loops=1)"
+        "        Group Key: dependent.essn"
+        "        Batches: 1  Memory Usage: 73kB"
+        "        ->  Seq Scan on dependent  (cost=10000000000.00..10000000013.00 rows=600 width=4) (actual time=0.007..0.033 rows=600 loops=1)"
+        "  ->  Index Scan using emp_ssn_hash on employee  (cost=0.00..2.21 rows=1 width=96) (actual time=0.001..0.001 rows=1 loops=600)"
+        "        Index Cond: (ssn = dependent.essn)"
+        "Planning Time: 0.467 ms"
+        "Execution Time: 0.770 ms"
 
     Brin:
+        "Nested Loop Semi Join  (cost=10000192000.01..13072184561.00 rows=600 width=96) (actual time=0.022..125.170 rows=600 loops=1)"
+        "  ->  Seq Scan on employee  (cost=10000000000.00..10000000423.00 rows=16000 width=96) (actual time=0.005..0.984 rows=16000 loops=1)"
+        "  ->  Bitmap Heap Scan on dependent  (cost=192000.01..192011.51 rows=1 width=4) (actual time=0.005..0.005 rows=0 loops=16000)"
+        "        Recheck Cond: (essn = employee.ssn)"
+        "        Rows Removed by Index Recheck: 11"
+        "        Heap Blocks: lossy=2163"
+        "        ->  Bitmap Index Scan on dep_ssn_brin  (cost=0.00..192000.01 rows=600 width=0) (actual time=0.004..0.004 rows=3 loops=16000)"
+        "              Index Cond: (essn = employee.ssn)"
+        "Planning Time: 0.237 ms"
+        "Execution Time: 136.093 ms"
 
     Mixed:
+        "Nested Loop Semi Join  (cost=192000.29..3072184828.29 rows=600 width=96) (actual time=0.023..126.236 rows=600 loops=1)"
+        "  ->  Index Scan using emp_ssn_bt on employee  (cost=0.29..690.28 rows=16000 width=96) (actual time=0.005..2.305 rows=16000 loops=1)"
+        "  ->  Bitmap Heap Scan on dependent  (cost=192000.01..192011.51 rows=1 width=4) (actual time=0.005..0.005 rows=0 loops=16000)"
+        "        Recheck Cond: (essn = employee.ssn)"
+        "        Rows Removed by Index Recheck: 11"
+        "        Heap Blocks: lossy=2163"
+        "        ->  Bitmap Index Scan on dep_ssn_brin  (cost=0.00..192000.01 rows=600 width=0) (actual time=0.004..0.004 rows=3 loops=16000)"
+        "              Index Cond: (essn = employee.ssn)"
+        "Planning Time: 0.775 ms"
+        "Execution Time: 137.776 ms"
 
 Optimized Query:
 
@@ -31,29 +69,82 @@ Optimized Query:
         "Execution Time: 1.959 ms"
 
     Btree:
+        "Merge Semi Join  (cost=0.56..72.43 rows=600 width=96) (actual time=0.011..0.284 rows=600 loops=1)"
+        "  Merge Cond: (employee.ssn = hasdependants.essn)"
+        "  ->  Index Scan using emp_ssn_bt on employee  (cost=0.29..690.28 rows=16000 width=96) (actual time=0.005..0.064 rows=601 loops=1)"
+        "  ->  Index Only Scan using hasdepssn on hasdependants  (cost=0.28..37.27 rows=600 width=4) (actual time=0.004..0.113 rows=600 loops=1)"
+        "        Heap Fetches: 600"
+        "Planning Time: 0.178 ms"
+        "Execution Time: 0.305 ms"
 
     Hash:
+        "Nested Loop Semi Join  (cost=10000000000.00..10000000737.00 rows=600 width=96) (actual time=0.028..6.400 rows=600 loops=1)"
+        "  ->  Seq Scan on employee  (cost=10000000000.00..10000000423.00 rows=16000 width=96) (actual time=0.012..0.781 rows=16000 loops=1)"
+        "  ->  Index Scan using hasdep_hash on hasdependants  (cost=0.00..0.02 rows=1 width=4) (actual time=0.000..0.000 rows=0 loops=16000)"
+        "        Index Cond: (essn = employee.ssn)"
+        "Planning Time: 0.972 ms"
+        "Execution Time: 6.436 ms"
 
     Brin:
+        "Nested Loop Semi Join  (cost=10000000000.00..10000000737.00 rows=600 width=96) (actual time=0.014..6.256 rows=600 loops=1)"
+        "  ->  Seq Scan on employee  (cost=10000000000.00..10000000423.00 rows=16000 width=96) (actual time=0.006..0.692 rows=16000 loops=1)"
+        "  ->  Index Scan using hasdep_hash on hasdependants  (cost=0.00..0.02 rows=1 width=4) (actual time=0.000..0.000 rows=0 loops=16000)"
+        "        Index Cond: (essn = employee.ssn)"
+        "Planning Time: 0.229 ms"
+        "Execution Time: 6.285 ms"
 
     Mixed:
+        "Nested Loop Semi Join  (cost=0.29..1004.29 rows=600 width=96) (actual time=0.011..7.025 rows=600 loops=1)"
+        "  ->  Index Scan using emp_ssn_bt on employee  (cost=0.29..690.28 rows=16000 width=96) (actual time=0.004..1.571 rows=16000 loops=1)"
+        "  ->  Index Scan using hasdep_hash on hasdependants  (cost=0.00..0.02 rows=1 width=4) (actual time=0.000..0.000 rows=0 loops=16000)"
+        "        Index Cond: (essn = employee.ssn)"
+        "Planning Time: 0.592 ms"
+        "Execution Time: 7.050 ms"
         
 Used Indicies:
 
     Btree:
+        CREATE INDEX IF NOT EXISTS hasdepssn
+        ON public.hasdependants USING btree
+        (essn ASC NULLS LAST)
+        TABLESPACE pg_default;
+        
+        CREATE INDEX IF NOT EXISTS emp_ssn_bt
+        ON public.employee USING btree
+        (ssn ASC NULLS LAST)
+        TABLESPACE pg_default;
 
-        comment:
+            comment: offers good improvement on both queries
 
     Hash:
+        CREATE INDEX IF NOT EXISTS emp_ssn_hash
+        ON public.employee USING hash
+        (ssn)
+        TABLESPACE pg_default;
 
-        comment:
+        CREATE INDEX IF NOT EXISTS hasdepssn
+        ON public.hasdependants USING btree
+        (essn ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+            comment: had to turn off seq scan because it is better than index scan on hash
 
     Brin:
+        CREATE INDEX IF NOT EXISTS dep_ssn_brin
+        ON public.dependent USING brin
+        (essn) with(pages_per_range = 32);
+        TABLESPACE pg_default;
 
-        comment:
+        CREATE INDEX has_ssn
+        ON public.hasdependants USING brin
+        (essn) with(pages_per_range = 32);
+
+            comment: same as hash indicies. worse cost.
 
     Mixed:
-    
-        comment:
+            comment: using emp_ssn_bt and dep_ssn_brin for old query while the new one uses
+            emp_ssn_bt and hasdep_hash, also had to close seq scan
         
 Discussion:
+    creating a view for the inner join saves the query from having to do the join itself thus
+    improving performance. only the btree index gave improvements to both indicies.
