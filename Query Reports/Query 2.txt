@@ -27,12 +27,94 @@ Given Query:
         "Execution Time: 3.387 ms"
 
     Btree:
+        "Unique  (cost=30.63..343.88 rows=6900 width=4) (actual time=0.296..1.214 rows=600 loops=1)"
+        "  ->  Index Only Scan using projectnum on project  (cost=30.63..326.63 rows=6900 width=4) (actual time=0.295..1.161 rows=600 loops=1)"
+        "        Filter: ((hashed SubPlan 1) OR (hashed SubPlan 2))"
+        "        Rows Removed by Filter: 8600"
+        "        Heap Fetches: 0"
+        "        SubPlan 1"
+        "          ->  Merge Join  (cost=9.21..13.76 rows=1 width=4) (actual time=0.067..0.067 rows=0 loops=1)"
+        "                Merge Cond: ((e.ssn = d.mgr_snn) AND (e.dno = d.dnumber))"
+        "                ->  Nested Loop  (cost=0.29..320.30 rows=9200 width=12) (actual time=0.024..0.025 rows=1 loops=1)"
+        "                      ->  Index Only Scan using emp_covering_btree on employee e  (cost=0.29..4.30 rows=1 width=8) (actual time=0.018..0.018 rows=1 loops=1)"
+        "                            Index Cond: (lname = 'employee1'::bpchar)"
+        "                            Heap Fetches: 0"
+        "                      ->  Seq Scan on project project_1  (cost=0.00..224.00 rows=9200 width=4) (actual time=0.006..0.006 rows=1 loops=1)"
+        "                ->  Sort  (cost=8.92..9.30 rows=150 width=8) (actual time=0.031..0.034 rows=150 loops=1)"
+        "                      Sort Key: d.mgr_snn, d.dnumber"
+        "                      Sort Method: quicksort  Memory: 32kB"
+        "                      ->  Seq Scan on department d  (cost=0.00..3.50 rows=150 width=8) (actual time=0.006..0.015 rows=150 loops=1)"
+        "        SubPlan 2"
+        "          ->  Hash Join  (cost=4.32..16.57 rows=1 width=4) (actual time=0.026..0.125 rows=600 loops=1)"
+        "                Hash Cond: (works_on.essn = employee.ssn)"
+        "                ->  Seq Scan on works_on  (cost=0.00..10.00 rows=600 width=8) (actual time=0.006..0.032 rows=600 loops=1)"
+        "                ->  Hash  (cost=4.30..4.30 rows=1 width=4) (actual time=0.012..0.013 rows=1 loops=1)"
+        "                      Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                      ->  Index Only Scan using emp_covering_btree on employee  (cost=0.29..4.30 rows=1 width=4) (actual time=0.007..0.008 rows=1 loops=1)"
+        "                            Index Cond: (lname = 'employee1'::bpchar)"
+        "                            Heap Fetches: 0"
+        "Planning Time: 1.210 ms"
+        "Execution Time: 1.308 ms"
         
-
     Hash:
-      
+        "HashAggregate  (cost=642.54..711.54 rows=6900 width=4) (actual time=1.219..1.283 rows=600 loops=1)"
+        "  Group Key: project.pnumber"
+        "  Batches: 1  Memory Usage: 241kB"
+        "  ->  Seq Scan on project  (cost=355.29..625.29 rows=6900 width=4) (actual time=0.196..1.155 rows=600 loops=1)"
+        "        Filter: ((hashed SubPlan 1) OR (hashed SubPlan 2))"
+        "        Rows Removed by Filter: 8600"
+        "        SubPlan 1"
+        "          ->  Nested Loop  (cost=0.00..329.77 rows=1 width=4) (actual time=0.027..0.028 rows=0 loops=1)"
+        "                ->  Nested Loop  (cost=0.00..13.77 rows=1 width=0) (actual time=0.027..0.028 rows=0 loops=1)"
+        "                      Join Filter: ((d.dnumber = e.dno) AND (d.mgr_snn = e.ssn))"
+        "                      Rows Removed by Join Filter: 150"
+        "                      ->  Index Scan using emp_hash on employee e  (cost=0.00..8.02 rows=1 width=8) (actual time=0.007..0.007 rows=1 loops=1)"
+        "                            Index Cond: (lname = 'employee1'::bpchar)"
+        "                      ->  Seq Scan on department d  (cost=0.00..3.50 rows=150 width=8) (actual time=0.007..0.013 rows=150 loops=1)"
+        "                ->  Seq Scan on project project_1  (cost=0.00..224.00 rows=9200 width=4) (never executed)"
+        "        SubPlan 2"
+        "          ->  Nested Loop  (cost=0.00..25.52 rows=1 width=4) (actual time=0.007..0.072 rows=600 loops=1)"
+        "                Join Filter: (works_on.essn = employee.ssn)"
+        "                ->  Index Scan using emp_hash on employee  (cost=0.00..8.02 rows=1 width=4) (actual time=0.001..0.001 rows=1 loops=1)"
+        "                      Index Cond: (lname = 'employee1'::bpchar)"
+        "                ->  Seq Scan on works_on  (cost=0.00..10.00 rows=600 width=8) (actual time=0.006..0.032 rows=600 loops=1)"
+        "Planning Time: 0.207 ms"
+        "Execution Time: 1.413 ms"
 
     Brin:
+        "Unique  (cost=40000001956.49..40000001990.99 rows=6900 width=4) (actual time=2.427..2.511 rows=600 loops=1)"
+        "  ->  Sort  (cost=40000001956.49..40000001973.74 rows=6900 width=4) (actual time=2.427..2.445 rows=600 loops=1)"
+        "        Sort Key: project.pnumber"
+        "        Sort Method: quicksort  Memory: 53kB"
+        "        ->  Seq Scan on project  (cost=40000001246.53..40000001516.53 rows=6900 width=4) (actual time=1.481..2.384 rows=600 loops=1)"
+        "              Filter: ((hashed SubPlan 1) OR (hashed SubPlan 2))"
+        "              Rows Removed by Filter: 8600"
+        "              SubPlan 1"
+        "                ->  Nested Loop  (cost=20000000012.09..20000000775.58 rows=1 width=4) (actual time=0.708..0.709 rows=0 loops=1)"
+        "                      ->  Nested Loop  (cost=10000000012.09..10000000459.58 rows=1 width=0) (actual time=0.707..0.709 rows=0 loops=1)"
+        "                            Join Filter: ((d.dnumber = e.dno) AND (d.mgr_snn = e.ssn))"
+        "                            Rows Removed by Join Filter: 150"
+        "                            ->  Seq Scan on department d  (cost=10000000000.00..10000000003.50 rows=150 width=8) (actual time=0.005..0.012 rows=150 loops=1)"
+        "                            ->  Materialize  (cost=12.09..453.45 rows=1 width=8) (actual time=0.001..0.005 rows=1 loops=150)"
+        "                                  ->  Bitmap Heap Scan on employee e  (cost=12.09..453.45 rows=1 width=8) (actual time=0.070..0.672 rows=1 loops=1)"
+        "                                        Recheck Cond: (lname = 'employee1'::bpchar)"
+        "                                        Rows Removed by Index Recheck: 7807"
+        "                                        Heap Blocks: lossy=128"
+        "                                        ->  Bitmap Index Scan on emp_brin  (cost=0.00..12.09 rows=14269 width=0) (actual time=0.018..0.018 rows=1280 loops=1)"
+        "                                              Index Cond: (lname = 'employee1'::bpchar)"
+        "                      ->  Seq Scan on project project_1  (cost=10000000000.00..10000000224.00 rows=9200 width=4) (never executed)"
+        "              SubPlan 2"
+        "                ->  Nested Loop  (cost=10000000012.09..10000000470.95 rows=1 width=4) (actual time=0.075..0.670 rows=600 loops=1)"
+        "                      Join Filter: (works_on.essn = employee.ssn)"
+        "                      ->  Bitmap Heap Scan on employee  (cost=12.09..453.45 rows=1 width=4) (actual time=0.068..0.599 rows=1 loops=1)"
+        "                            Recheck Cond: (lname = 'employee1'::bpchar)"
+        "                            Rows Removed by Index Recheck: 7807"
+        "                            Heap Blocks: lossy=128"
+        "                            ->  Bitmap Index Scan on emp_brin  (cost=0.00..12.09 rows=14269 width=0) (actual time=0.015..0.015 rows=1280 loops=1)"
+        "                                  Index Cond: (lname = 'employee1'::bpchar)"
+        "                      ->  Seq Scan on works_on  (cost=10000000000.00..10000000010.00 rows=600 width=8) (actual time=0.007..0.029 rows=600 loops=1)"
+        "Planning Time: 0.220 ms"
+        "Execution Time: 2.600 ms"
         
 
 Optimized Query:
@@ -63,29 +145,127 @@ Optimized Query:
         "Execution Time: 2.330 ms"
 
     Btree:
-        
+        "Unique  (cost=30.38..30.39 rows=2 width=4) (actual time=0.255..0.315 rows=600 loops=1)"
+        "  ->  Sort  (cost=30.38..30.38 rows=2 width=4) (actual time=0.255..0.271 rows=600 loops=1)"
+        "        Sort Key: project.pnumber"
+        "        Sort Method: quicksort  Memory: 53kB"
+        "        ->  Append  (cost=9.21..30.37 rows=2 width=4) (actual time=0.096..0.210 rows=600 loops=1)"
+        "              ->  Merge Join  (cost=9.21..13.76 rows=1 width=4) (actual time=0.074..0.074 rows=0 loops=1)"
+        "                    Merge Cond: ((e.ssn = d.mgr_snn) AND (e.dno = d.dnumber))"
+        "                    ->  Nested Loop  (cost=0.29..320.30 rows=9200 width=12) (actual time=0.029..0.030 rows=1 loops=1)"
+        "                          ->  Index Only Scan using emp_covering_btree on employee e  (cost=0.29..4.30 rows=1 width=8) (actual time=0.020..0.020 rows=1 loops=1)"
+        "                                Index Cond: (lname = 'employee1'::bpchar)"
+        "                                Heap Fetches: 0"
+        "                          ->  Seq Scan on project  (cost=0.00..224.00 rows=9200 width=4) (actual time=0.008..0.008 rows=1 loops=1)"
+        "                    ->  Sort  (cost=8.92..9.30 rows=150 width=8) (actual time=0.033..0.037 rows=150 loops=1)"
+        "                          Sort Key: d.mgr_snn, d.dnumber"
+        "                          Sort Method: quicksort  Memory: 32kB"
+        "                          ->  Seq Scan on department d  (cost=0.00..3.50 rows=150 width=8) (actual time=0.009..0.019 rows=150 loops=1)"
+        "              ->  Hash Join  (cost=4.32..16.57 rows=1 width=4) (actual time=0.022..0.117 rows=600 loops=1)"
+        "                    Hash Cond: (works_on.essn = employee.ssn)"
+        "                    ->  Seq Scan on works_on  (cost=0.00..10.00 rows=600 width=8) (actual time=0.005..0.029 rows=600 loops=1)"
+        "                    ->  Hash  (cost=4.30..4.30 rows=1 width=4) (actual time=0.010..0.011 rows=1 loops=1)"
+        "                          Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                          ->  Index Only Scan using emp_covering_btree on employee  (cost=0.29..4.30 rows=1 width=4) (actual time=0.007..0.008 rows=1 loops=1)"
+        "                                Index Cond: (lname = 'employee1'::bpchar)"
+        "                                Heap Fetches: 0"
+        "Planning Time: 1.100 ms"
+        "Execution Time: 0.396 ms"
 
     Hash:
-      
+        "Unique  (cost=349.00..349.01 rows=2 width=4) (actual time=0.210..0.275 rows=600 loops=1)"
+        "  ->  Sort  (cost=349.00..349.00 rows=2 width=4) (actual time=0.210..0.225 rows=600 loops=1)"
+        "        Sort Key: project.pnumber"
+        "        Sort Method: quicksort  Memory: 53kB"
+        "        ->  Append  (cost=8.03..348.99 rows=2 width=4) (actual time=0.051..0.161 rows=600 loops=1)"
+        "              ->  Nested Loop  (cost=8.03..328.67 rows=1 width=4) (actual time=0.040..0.041 rows=0 loops=1)"
+        "                    ->  Hash Join  (cost=8.03..12.67 rows=1 width=0) (actual time=0.040..0.040 rows=0 loops=1)"
+        "                          Hash Cond: ((d.dnumber = e.dno) AND (d.mgr_snn = e.ssn))"
+        "                          ->  Seq Scan on department d  (cost=0.00..3.50 rows=150 width=8) (actual time=0.007..0.013 rows=150 loops=1)"
+        "                          ->  Hash  (cost=8.02..8.02 rows=1 width=8) (actual time=0.012..0.012 rows=1 loops=1)"
+        "                                Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                                ->  Index Scan using emp_hash on employee e  (cost=0.00..8.02 rows=1 width=8) (actual time=0.009..0.009 rows=1 loops=1)"
+        "                                      Index Cond: (lname = 'employee1'::bpchar)"
+        "                    ->  Seq Scan on project  (cost=0.00..224.00 rows=9200 width=4) (never executed)"
+        "              ->  Hash Join  (cost=8.03..20.29 rows=1 width=4) (actual time=0.011..0.099 rows=600 loops=1)"
+        "                    Hash Cond: (works_on.essn = employee.ssn)"
+        "                    ->  Seq Scan on works_on  (cost=0.00..10.00 rows=600 width=8) (actual time=0.005..0.029 rows=600 loops=1)"
+        "                    ->  Hash  (cost=8.02..8.02 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)"
+        "                          Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                          ->  Index Scan using emp_hash on employee  (cost=0.00..8.02 rows=1 width=4) (actual time=0.001..0.001 rows=1 loops=1)"
+        "                                Index Cond: (lname = 'employee1'::bpchar)"
+        "Planning Time: 0.702 ms"
+        "Execution Time: 0.330 ms"
 
-    Brin:   
+    Brin:
+        "Unique  (cost=1240.96..1240.97 rows=2 width=4) (actual time=1.441..1.505 rows=600 loops=1)"
+        "  ->  Sort  (cost=1240.96..1240.96 rows=2 width=4) (actual time=1.440..1.456 rows=600 loops=1)"
+        "        Sort Key: project.pnumber"
+        "        Sort Method: quicksort  Memory: 53kB"
+        "        ->  Append  (cost=12.09..1240.95 rows=2 width=4) (actual time=1.276..1.389 rows=600 loops=1)"
+        "              ->  Nested Loop  (cost=12.09..775.20 rows=1 width=4) (actual time=0.669..0.669 rows=0 loops=1)"
+        "                    ->  Nested Loop  (cost=12.09..459.20 rows=1 width=0) (actual time=0.668..0.669 rows=0 loops=1)"
+        "                          Join Filter: ((d.dnumber = e.dno) AND (d.mgr_snn = e.ssn))"
+        "                          Rows Removed by Join Filter: 150"
+        "                          ->  Bitmap Heap Scan on employee e  (cost=12.09..453.45 rows=1 width=8) (actual time=0.076..0.650 rows=1 loops=1)"
+        "                                Recheck Cond: (lname = 'employee1'::bpchar)"
+        "                                Rows Removed by Index Recheck: 7807"
+        "                                Heap Blocks: lossy=128"
+        "                                ->  Bitmap Index Scan on emp_brin  (cost=0.00..12.09 rows=14269 width=0) (actual time=0.021..0.021 rows=1280 loops=1)"
+        "                                      Index Cond: (lname = 'employee1'::bpchar)"
+        "                          ->  Seq Scan on department d  (cost=0.00..3.50 rows=150 width=8) (actual time=0.005..0.011 rows=150 loops=1)"
+        "                    ->  Seq Scan on project  (cost=0.00..224.00 rows=9200 width=4) (never executed)"
+        "              ->  Hash Join  (cost=453.46..465.72 rows=1 width=4) (actual time=0.607..0.699 rows=600 loops=1)"
+        "                    Hash Cond: (works_on.essn = employee.ssn)"
+        "                    ->  Seq Scan on works_on  (cost=0.00..10.00 rows=600 width=8) (actual time=0.008..0.032 rows=600 loops=1)"
+        "                    ->  Hash  (cost=453.45..453.45 rows=1 width=4) (actual time=0.589..0.590 rows=1 loops=1)"
+        "                          Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                          ->  Bitmap Heap Scan on employee  (cost=12.09..453.45 rows=1 width=4) (actual time=0.066..0.585 rows=1 loops=1)"
+        "                                Recheck Cond: (lname = 'employee1'::bpchar)"
+        "                                Rows Removed by Index Recheck: 7807"
+        "                                Heap Blocks: lossy=128"
+        "                                ->  Bitmap Index Scan on emp_brin  (cost=0.00..12.09 rows=14269 width=0) (actual time=0.015..0.016 rows=1280 loops=1)"
+        "                                      Index Cond: (lname = 'employee1'::bpchar)"
+        "Planning Time: 0.737 ms"
+        "Execution Time: 1.559 ms"
 
 Used Indicies:
 
     Btree:
-        CREATE INDEX depdnum
-        ON public.department USING btree
-        (dnumber ASC NULLS LAST);
-
-        CREATE INDEX IF NOT EXISTS emplname
+        CREATE INDEX IF NOT EXISTS "empCoveringBtree"
         ON public.employee USING btree
-        (lname COLLATE pg_catalog."default" ASC NULLS LAST)
+        (lname COLLATE pg_catalog."default" ASC NULLS LAST, ssn ASC NULLS LAST, dno ASC NULLS LAST)
         TABLESPACE pg_default;
+
+            comment: creating a Btree index that index that includes all coloumnds
+            referenced in the query allows for the use of "index scan only" further
+            saving time compared to a normal index scan    
+
+        CREATE INDEX IF NOT EXISTS projectnum
+        ON public.project USING btree
+        (pnumber ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+            comment: this index helps with finding if the pno is in either subqueries in the original query
         
     Hash:
-      
+        CREATE INDEX IF NOT EXISTS emp_hash
+        ON public.employee USING hash
+        (lname COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
+
+            comment: hash index is worse than the btree as it is not multi dimensional so we lose
+            out on the "index scan only" and are downgraded back to index scan
 
     Brin:
+        CREATE INDEX IF NOT EXISTS emp_brin
+        ON public.employee USING brin
+        (lname COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
 
+            comment: brin index is not suitable for the old query so as a result the query planner opts
+            out of using it and forcing it to use it by closing the seq scan produces wrong cost estimates
 
 Discussion:
+    the optimized query coupled with a covering btree index provides almost a 50x improvement
+    in query cost compared to the old query with no indicies
