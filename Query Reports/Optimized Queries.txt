@@ -1,18 +1,14 @@
-1:  (Alternative)
+1:
     select *
-    from
-        (
-        select *
-        from student
-        where 
-        department = 'CSEN'
-        ) as CS1_student
+    from (select *
+    from csenstudents) as CS1_student
     full outer join
-        (
-        select *
-        from takes t
-        inner join (select * from section s where semester = 1 and year = 2019) as s on t.section_id = s.section_id 
-        ) as sem1_student 
+    (select *
+    from takes t inner join section s 
+    on t.section_id = s.section_id 
+    where semester = 1 
+    and 
+    year = 2019) as sem1_student 
     on CS1_student.id = sem1_student.student_id;
 
 2:

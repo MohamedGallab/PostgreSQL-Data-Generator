@@ -37,28 +37,17 @@
         update pg_index set indisvalid = false where indexrelid = 'rating_pkey'::regclass;
         update pg_index set indisvalid = false where indexrelid = 'reviewer_pkey'::regclass;
 
-2 - use materialized view when needed
+2 - turn of seq scan if needed
+
+    SET enable_seqscan = OFF;
+
+3 - use materialized view when needed
 
     Schema 1:
-        CREATE MATERIALIZED VIEW sectionJoinTakes as
-        select s.*, student_id, grade
-        from takes t inner join section s on t.section_id = s.section_id
-        where semester = 1 and year = 2019
-
+        create MATERIALIZED VIEW CSENstudents as
         select *
-            from
-                (
-                select *
-                from student
-                where 
-                department = 'CSEN'
-                ) as CS1_student
-            full outer join
-                (
-                select *
-                from sectionJoinTakes
-                ) as sem1_student 
-            on CS1_student.id = sem1_student.student_id;
+        from student
+        where department = 'CSEN'
 
     Schema 2:
         create MATERIALIZED VIEW hasDependants as
