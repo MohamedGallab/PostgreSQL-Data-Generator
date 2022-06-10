@@ -1,0 +1,201 @@
+Given Query:
+
+    No Indicies:
+        "Hash Semi Join  (cost=1840.21..5026.90 rows=17 width=51) (actual time=6.487..20.482 rows=350 loops=1)"
+        "  Hash Cond: (movie.mov_id = movie_direction.mov_id)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on director  (cost=0.00..147.00 rows=1 width=4) (actual time=0.448..0.573 rows=1 loops=1)"
+        "          Filter: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "          Rows Removed by Filter: 5999"
+        "  ->  Seq Scan on movie  (cost=0.00..2924.00 rows=100000 width=55) (actual time=0.007..5.494 rows=100000 loops=1)"
+        "  ->  Hash  (cost=1693.00..1693.00 rows=17 width=4) (actual time=6.471..6.473 rows=350 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 21kB"
+        "        ->  Seq Scan on movie_direction  (cost=0.00..1693.00 rows=17 width=4) (actual time=0.579..6.430 rows=350 loops=1)"
+        "              Filter: (dir_id = $0)"
+        "              Rows Removed by Filter: 99650"
+        "Planning Time: 0.157 ms"
+        "Execution Time: 20.512 ms"
+    Btree:
+        "Nested Loop  (cost=1701.64..1842.96 rows=17 width=51) (actual time=6.258..6.786 rows=350 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Index Scan using director_btree on director  (cost=0.28..8.30 rows=1 width=4) (actual time=0.013..0.014 rows=1 loops=1)"
+        "          Index Cond: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "  ->  HashAggregate  (cost=1693.04..1693.21 rows=17 width=4) (actual time=6.243..6.289 rows=350 loops=1)"
+        "        Group Key: movie_direction.mov_id"
+        "        Batches: 1  Memory Usage: 85kB"
+        "        ->  Seq Scan on movie_direction  (cost=0.00..1693.00 rows=17 width=4) (actual time=0.024..6.173 rows=350 loops=1)"
+        "              Filter: (dir_id = $0)"
+        "              Rows Removed by Filter: 99650"
+        "  ->  Index Scan using movie_btree on movie  (cost=0.29..8.31 rows=1 width=55) (actual time=0.001..0.001 rows=1 loops=350)"
+        "        Index Cond: (mov_id = movie_direction.mov_id)"
+        "Planning Time: 0.370 ms"
+        "Execution Time: 6.826 ms"     
+    Hash:
+        "Nested Loop  (cost=1840.04..1976.68 rows=17 width=51) (actual time=6.521..7.103 rows=350 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on director  (cost=0.00..147.00 rows=1 width=4) (actual time=0.451..0.568 rows=1 loops=1)"
+        "          Filter: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "          Rows Removed by Filter: 5999"
+        "  ->  HashAggregate  (cost=1693.04..1693.21 rows=17 width=4) (actual time=6.505..6.551 rows=350 loops=1)"
+        "        Group Key: movie_direction.mov_id"
+        "        Batches: 1  Memory Usage: 85kB"
+        "        ->  Seq Scan on movie_direction  (cost=0.00..1693.00 rows=17 width=4) (actual time=0.578..6.435 rows=350 loops=1)"
+        "              Filter: (dir_id = $0)"
+        "              Rows Removed by Filter: 99650"
+        "  ->  Index Scan using movie_hash on movie  (cost=0.00..8.02 rows=1 width=55) (actual time=0.001..0.001 rows=1 loops=350)"
+        "        Index Cond: (mov_id = movie_direction.mov_id)"
+        "Planning Time: 0.297 ms"
+        "Execution Time: 7.138 ms"
+    Brin:
+        "Hash Semi Join  (cost=20000001852.23..20000005038.92 rows=17 width=51) (actual time=6.255..19.437 rows=350 loops=1)"
+        "  Hash Cond: (movie.mov_id = movie_direction.mov_id)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Bitmap Heap Scan on director  (cost=12.02..159.02 rows=1 width=4) (actual time=0.172..0.327 rows=1 loops=1)"
+        "          Recheck Cond: (dir_lname = 'Allen'::bpchar)"
+        "          Rows Removed by Index Recheck: 2575"
+        "          Filter: (dir_fname = 'Woddy'::bpchar)"
+        "          Heap Blocks: lossy=25"
+        "          ->  Bitmap Index Scan on dir_lname_brin  (cost=0.00..12.02 rows=6000 width=0) (actual time=0.017..0.017 rows=250 loops=1)"
+        "                Index Cond: (dir_lname = 'Allen'::bpchar)"
+        "  ->  Seq Scan on movie  (cost=10000000000.00..10000002924.00 rows=100000 width=55) (actual time=0.005..5.663 rows=100000 loops=1)"
+        "  ->  Hash  (cost=10000001693.00..10000001693.00 rows=17 width=4) (actual time=6.225..6.227 rows=350 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 21kB"
+        "        ->  Seq Scan on movie_direction  (cost=10000000000.00..10000001693.00 rows=17 width=4) (actual time=0.334..6.187 rows=350 loops=1)"
+        "              Filter: (dir_id = $0)"
+        "              Rows Removed by Filter: 99650"
+        "Planning Time: 0.346 ms"
+        "Execution Time: 19.476 ms"
+    Mixed:
+        "Nested Loop  (cost=1701.35..1837.98 rows=17 width=51) (actual time=5.958..6.539 rows=350 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Index Scan using director_btree on director  (cost=0.28..8.30 rows=1 width=4) (actual time=0.013..0.014 rows=1 loops=1)"
+        "          Index Cond: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "  ->  HashAggregate  (cost=1693.04..1693.21 rows=17 width=4) (actual time=5.942..5.986 rows=350 loops=1)"
+        "        Group Key: movie_direction.mov_id"
+        "        Batches: 1  Memory Usage: 85kB"
+        "        ->  Seq Scan on movie_direction  (cost=0.00..1693.00 rows=17 width=4) (actual time=0.023..5.874 rows=350 loops=1)"
+        "              Filter: (dir_id = $0)"
+        "              Rows Removed by Filter: 99650"
+        "  ->  Index Scan using movie_hash on movie  (cost=0.00..8.02 rows=1 width=55) (actual time=0.001..0.001 rows=1 loops=350)"
+        "        Index Cond: (mov_id = movie_direction.mov_id)"
+        "Planning Time: 0.331 ms"
+        "Execution Time: 6.574 ms"
+
+Optimized Query:
+
+    No Indicies:
+        "Seq Scan on mdirection  (cost=0.00..4000.00 rows=1 width=51) (actual time=0.006..15.503 rows=350 loops=1)"
+        "  Filter: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "  Rows Removed by Filter: 99650"
+        "Planning Time: 0.025 ms"
+        "Execution Time: 15.521 ms"
+    Btree:
+        "Index Scan using mdirection_btree on mdirection  (cost=0.29..8.31 rows=1 width=51) (actual time=0.015..0.071 rows=350 loops=1)"
+        "  Index Cond: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "Planning Time: 0.175 ms"
+        "Execution Time: 0.088 ms"        
+    Hash:
+        "Bitmap Heap Scan on mdirection  (cost=21.61..25.62 rows=1 width=51) (actual time=0.053..0.157 rows=350 loops=1)"
+        "  Recheck Cond: ((dir_lname = 'Allen'::bpchar) AND (dir_fname = 'Woddy'::bpchar))"
+        "  Heap Blocks: exact=16"
+        "  ->  BitmapAnd  (cost=21.61..21.61 rows=1 width=0) (actual time=0.045..0.045 rows=0 loops=1)"
+        "        ->  Bitmap Index Scan on mdirection_lname_hash  (cost=0.00..10.68 rows=357 width=0) (actual time=0.016..0.016 rows=350 loops=1)"
+        "              Index Cond: (dir_lname = 'Allen'::bpchar)"
+        "        ->  Bitmap Index Scan on mdirection_fname_hash  (cost=0.00..10.68 rows=357 width=0) (actual time=0.027..0.027 rows=350 loops=1)"
+        "              Index Cond: (dir_fname = 'Woddy'::bpchar)"
+        "Planning Time: 0.223 ms"
+        "Execution Time: 0.180 ms"
+    Brin:
+        "Bitmap Heap Scan on mdirection  (cost=12.63..4012.63 rows=1 width=51) (actual time=0.057..1.936 rows=350 loops=1)"
+        "  Recheck Cond: (dir_lname = 'Allen'::bpchar)"
+        "  Rows Removed by Index Recheck: 9890"
+        "  Filter: (dir_fname = 'Woddy'::bpchar)"
+        "  Heap Blocks: lossy=256"
+        "  ->  Bitmap Index Scan on mdirection_lname_brin  (cost=0.00..12.63 rows=100000 width=0) (actual time=0.051..0.051 rows=2560 loops=1)"
+        "        Index Cond: (dir_lname = 'Allen'::bpchar)"
+        "Planning Time: 0.249 ms"
+        "Execution Time: 1.966 ms"
+    Mixed:
+        "Bitmap Heap Scan on mdirection  (cost=17.90..21.91 rows=1 width=51) (actual time=0.041..0.143 rows=350 loops=1)"
+        "  Recheck Cond: ((dir_fname = 'Woddy'::bpchar) AND (dir_lname = 'Allen'::bpchar))"
+        "  Heap Blocks: exact=16"
+        "  ->  BitmapAnd  (cost=17.90..17.90 rows=1 width=0) (actual time=0.035..0.035 rows=0 loops=1)"
+        "        ->  Bitmap Index Scan on mdirection_fname_btree  (cost=0.00..6.97 rows=357 width=0) (actual time=0.019..0.019 rows=350 loops=1)"
+        "              Index Cond: (dir_fname = 'Woddy'::bpchar)"
+        "        ->  Bitmap Index Scan on mdirection_lname_hash  (cost=0.00..10.68 rows=357 width=0) (actual time=0.014..0.014 rows=350 loops=1)"
+        "              Index Cond: (dir_lname = 'Allen'::bpchar)"
+        "Planning Time: 0.276 ms"
+        "Execution Time: 0.167 ms"
+Used Indicies:
+
+    Btree:
+        CREATE INDEX IF NOT EXISTS movie_btree
+        ON public.movie USING btree
+        (mov_id ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+
+        CREATE INDEX IF NOT EXISTS director_btree
+        ON public.director USING btree
+        (dir_fname COLLATE pg_catalog."default" ASC NULLS LAST, dir_lname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        CREATE INDEX IF NOT EXISTS mdirection_btree
+        ON public.mdirection USING btree
+        (dir_fname COLLATE pg_catalog."default" ASC NULLS LAST, dir_lname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        CREATE INDEX IF NOT EXISTS mdirection_fname_btree
+        ON public.mdirection USING btree
+        (dir_fname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        comment:
+            better on both queries with the optimized query seeing the greater improvment 
+    Hash:
+        CREATE INDEX IF NOT EXISTS movie_hash
+        ON public.movie USING hash
+        (mov_id)
+        TABLESPACE pg_default;
+
+        CREATE INDEX IF NOT EXISTS mdirection_fname_hash
+        ON public.mdirection USING hash
+        (dir_fname COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
+
+        CREATE INDEX IF NOT EXISTS mdirection_lname_hash
+        ON public.mdirection USING hash
+        (dir_lname COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
+
+        comment:
+            better on both queries with the optimized query seeing the greater improvment however worse than the btree as it is single dimensional
+    Brin:
+
+        CREATE INDEX IF NOT EXISTS dir_lname_brin
+        ON public.director USING brin
+        (dir_lname COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
+
+
+        CREATE INDEX IF NOT EXISTS mdirection_lname_brin
+        ON public.mdirection USING brin
+        (dir_lname) with (pages_per_range = 32)
+        TABLESPACE pg_default;	
+        comment:
+            worse on both queries than all with the optimized query having a better performance that is close to it's no index performance but clearly brin wasnt suitable for this query
+    Mixed:
+        CREATE INDEX IF NOT EXISTS movie_hash
+        ON public.movie USING hash
+        (mov_id)
+        TABLESPACE pg_default;
+        
+        CREATE INDEX IF NOT EXISTS director_btree
+        ON public.director USING btree
+        (dir_fname COLLATE pg_catalog."default" ASC NULLS LAST, dir_lname COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+        comment:
+            the optimized query saw improvment however the btree alone was better while the old query saw the best results with mixed Indicies
+Discussion:
+
+        the usage of the materialized view of the join greatly improved the performance in all cases with the btree being the fastest in both queries 
