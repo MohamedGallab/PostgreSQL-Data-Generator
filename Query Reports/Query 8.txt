@@ -1,19 +1,171 @@
 Given Query:
 
-
     No Indicies:
-        "Hash Semi Join  (cost=839.43..1303.20 rows=5833 width=21) (actual time=4.506..6.802 rows=5669 loops=1)"
+        "Hash Semi Join  (cost=838.43..1302.20 rows=5833 width=21) (actual time=4.171..6.460 rows=5669 loops=1)"
         "  Hash Cond: (s.sid = r.sid)"
-        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.010..0.786 rows=19000 loops=1)"
-        "  ->  Hash  (cost=766.52..766.52 rows=5833 width=4) (actual time=4.472..4.474 rows=5669 loops=1)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.008..0.769 rows=19000 loops=1)"
+        "  ->  Hash  (cost=765.52..765.52 rows=5833 width=4) (actual time=4.156..4.159 rows=5669 loops=1)"
         "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
-        "        ->  Hash Semi Join  (cost=69.75..766.52 rows=5833 width=4) (actual time=0.377..3.962 rows=5669 loops=1)"
+        "        ->  Hash Semi Join  (cost=68.75..765.52 rows=5833 width=4) (actual time=0.331..3.701 rows=5669 loops=1)"
         "              Hash Cond: (r.bid = b.bid)"
-        "              ->  Seq Scan on reserves r  (cost=0.00..540.00 rows=35000 width=8) (actual time=0.006..1.470 rows=35000 loops=1)"
-        "              ->  Hash  (cost=63.50..63.50 rows=500 width=4) (actual time=0.280..0.281 rows=500 loops=1)"
+        "              ->  Seq Scan on reserves r  (cost=0.00..540.00 rows=35000 width=8) (actual time=0.005..1.326 rows=35000 loops=1)"
+        "              ->  Hash  (cost=62.50..62.50 rows=500 width=4) (actual time=0.244..0.245 rows=500 loops=1)"
         "                    Buckets: 1024  Batches: 1  Memory Usage: 26kB"
-        "                    ->  Seq Scan on boat b  (cost=0.00..63.50 rows=500 width=4) (actual time=0.008..0.240 rows=500 loops=1)"
+        "                    ->  Seq Scan on boat b  (cost=0.00..62.50 rows=500 width=4) (actual time=0.005..0.210 rows=500 loops=1)"
         "                          Filter: (color = 'red'::bpchar)"
         "                          Rows Removed by Filter: 2500"
-        "Planning Time: 0.246 ms"
-        "Execution Time: 6.966 ms"
+        "Planning Time: 0.216 ms"
+        "Execution Time: 6.618 ms"
+
+    Btree:
+        "Hash Semi Join  (cost=796.96..1260.73 rows=5833 width=21) (actual time=5.036..7.223 rows=5669 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.022..0.730 rows=19000 loops=1)"
+        "  ->  Hash  (cost=724.05..724.05 rows=5833 width=4) (actual time=4.963..4.965 rows=5669 loops=1)"
+        "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
+        "        ->  Hash Semi Join  (cost=27.28..724.05 rows=5833 width=4) (actual time=0.381..4.234 rows=5669 loops=1)"
+        "              Hash Cond: (r.bid = b.bid)"
+        "              ->  Seq Scan on reserves r  (cost=0.00..540.00 rows=35000 width=8) (actual time=0.008..1.541 rows=35000 loops=1)"
+        "              ->  Hash  (cost=21.03..21.03 rows=500 width=4) (actual time=0.193..0.194 rows=500 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 26kB"
+        "                    ->  Index Only Scan using boat_color_bid_bt on boat b  (cost=0.28..21.03 rows=500 width=4) (actual time=0.029..0.108 rows=500 loops=1)"
+        "                          Index Cond: (color = 'red'::bpchar)"
+        "                          Heap Fetches: 0"
+        "Planning Time: 0.500 ms"
+        "Execution Time: 7.436 ms"
+
+    Hash:
+        "Hash Semi Join  (cost=827.05..1290.82 rows=5833 width=21) (actual time=4.287..6.716 rows=5669 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=0.00..349.00 rows=19000 width=25) (actual time=0.006..0.763 rows=19000 loops=1)"
+        "  ->  Hash  (cost=754.14..754.14 rows=5833 width=4) (actual time=4.255..4.259 rows=5669 loops=1)"
+        "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
+        "        ->  Hash Semi Join  (cost=57.38..754.14 rows=5833 width=4) (actual time=0.316..3.773 rows=5669 loops=1)"
+        "              Hash Cond: (r.bid = b.bid)"
+        "              ->  Seq Scan on reserves r  (cost=0.00..540.00 rows=35000 width=8) (actual time=0.005..1.315 rows=35000 loops=1)"
+        "              ->  Hash  (cost=51.13..51.13 rows=500 width=4) (actual time=0.180..0.182 rows=500 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 26kB"
+        "                    ->  Bitmap Heap Scan on boat b  (cost=19.88..51.13 rows=500 width=4) (actual time=0.046..0.131 rows=500 loops=1)"
+        "                          Recheck Cond: (color = 'red'::bpchar)"
+        "                          Heap Blocks: exact=25"
+        "                          ->  Bitmap Index Scan on boat_color_hash  (cost=0.00..19.75 rows=500 width=0) (actual time=0.024..0.025 rows=500 loops=1)"
+        "                                Index Cond: (color = 'red'::bpchar)"
+        "Planning Time: 0.187 ms"
+        "Execution Time: 6.865 ms"
+
+    Brin:
+        "Hash Semi Join  (cost=10003134279.79..10003134743.55 rows=5833 width=21) (actual time=1057.692..1059.991 rows=5669 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Seq Scan on sailors s  (cost=10000000000.00..10000000349.00 rows=19000 width=25) (actual time=0.008..0.734 rows=19000 loops=1)"
+        "  ->  Hash  (cost=3134206.87..3134206.87 rows=5833 width=4) (actual time=1057.662..1057.664 rows=5669 loops=1)"
+        "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
+        "        ->  Nested Loop  (cost=6075.92..3134206.87 rows=5833 width=4) (actual time=0.434..1055.032 rows=5669 loops=1)"
+        "              ->  HashAggregate  (cost=75.89..80.89 rows=500 width=4) (actual time=0.301..0.657 rows=500 loops=1)"
+        "                    Group Key: b.bid"
+        "                    Batches: 1  Memory Usage: 73kB"
+        "                    ->  Bitmap Heap Scan on boat b  (cost=12.13..74.64 rows=500 width=4) (actual time=0.023..0.245 rows=500 loops=1)"
+        "                          Recheck Cond: (color = 'red'::bpchar)"
+        "                          Rows Removed by Index Recheck: 2500"
+        "                          Heap Blocks: lossy=25"
+        "                          ->  Bitmap Index Scan on boat_color_brin  (cost=0.00..12.01 rows=3000 width=0) (actual time=0.017..0.017 rows=250 loops=1)"
+        "                                Index Cond: (color = 'red'::bpchar)"
+        "              ->  Bitmap Heap Scan on reserves r  (cost=6000.03..6268.13 rows=12 width=8) (actual time=0.095..2.101 rows=11 loops=500)"
+        "                    Recheck Cond: (bid = b.bid)"
+        "                    Rows Removed by Index Recheck: 31370"
+        "                    Heap Blocks: lossy=85220"
+        "                    ->  Bitmap Index Scan on res_bid_brin  (cost=0.00..6000.03 rows=21128 width=0) (actual time=0.012..0.012 rows=1704 loops=500)"
+        "                          Index Cond: (bid = b.bid)"
+        "Planning Time: 0.159 ms"
+        "Execution Time: 1060.485 ms"
+    
+    Mixed:
+        "Hash Semi Join  (cost=10003134267.94..10003135135.71 rows=5833 width=21) (actual time=943.918..949.674 rows=5669 loops=1)"
+        "  Hash Cond: (s.sid = r.sid)"
+        "  ->  Index Only Scan using sail_sid_sname on sailors s  (cost=0.29..753.29 rows=19000 width=25) (actual time=0.008..2.553 rows=19000 loops=1)"
+        "        Heap Fetches: 0"
+        "  ->  Hash  (cost=10003134194.74..10003134194.74 rows=5833 width=4) (actual time=943.888..943.890 rows=5669 loops=1)"
+        "        Buckets: 8192  Batches: 1  Memory Usage: 264kB"
+        "        ->  Nested Loop  (cost=10000006063.78..10003134194.74 rows=5833 width=4) (actual time=0.474..940.994 rows=5669 loops=1)"
+        "              ->  HashAggregate  (cost=10000000063.75..10000000068.75 rows=500 width=4) (actual time=0.313..0.638 rows=500 loops=1)"
+        "                    Group Key: b.bid"
+        "                    Batches: 1  Memory Usage: 73kB"
+        "                    ->  Seq Scan on boat b  (cost=10000000000.00..10000000062.50 rows=500 width=4) (actual time=0.008..0.239 rows=500 loops=1)"
+        "                          Filter: (color = 'red'::bpchar)"
+        "                          Rows Removed by Filter: 2500"
+        "              ->  Bitmap Heap Scan on reserves r  (cost=6000.03..6268.13 rows=12 width=8) (actual time=0.085..1.873 rows=11 loops=500)"
+        "                    Recheck Cond: (bid = b.bid)"
+        "                    Rows Removed by Index Recheck: 31370"
+        "                    Heap Blocks: lossy=85220"
+        "                    ->  Bitmap Index Scan on res_bid_brin  (cost=0.00..6000.03 rows=21128 width=0) (actual time=0.011..0.011 rows=1704 loops=500)"
+        "                          Index Cond: (bid = b.bid)"
+        "Planning Time: 0.258 ms"
+        "Execution Time: 950.754 ms"
+
+Optimized Query:
+
+    No Indicies:
+        "Seq Scan on schema3join  (cost=0.00..904.50 rows=5669 width=21) (actual time=0.159..5.642 rows=5669 loops=1)"
+        "  Filter: (color = 'red'::bpchar)"
+        "  Rows Removed by Filter: 29331"
+        "Planning Time: 0.071 ms"
+        "Execution Time: 5.798 ms"
+
+    Btree:
+        "Index Only Scan using mv_color_sname_bt on schema3join  (cost=0.41..239.62 rows=5669 width=21) (actual time=0.021..0.433 rows=5669 loops=1)"
+        "  Index Cond: (color = 'red'::bpchar)"
+        "  Heap Fetches: 0"
+        "Planning Time: 0.082 ms"
+        "Execution Time: 0.529 ms"
+
+    Hash:
+        "Bitmap Heap Scan on schema3join  (cost=183.93..721.80 rows=5669 width=21) (actual time=0.199..1.398 rows=5669 loops=1)"
+        "  Recheck Cond: (color = 'red'::bpchar)"
+        "  Heap Blocks: exact=454"
+        "  ->  Bitmap Index Scan on mv_color_hash  (cost=0.00..182.52 rows=5669 width=0) (actual time=0.164..0.164 rows=5669 loops=1)"
+        "        Index Cond: (color = 'red'::bpchar)"
+        "Planning Time: 0.116 ms"
+        "Execution Time: 1.512 ms"
+
+    Brin:
+        "Bitmap Heap Scan on schema3join  (cost=13.53..881.69 rows=5669 width=21) (actual time=0.170..4.255 rows=5669 loops=1)"
+        "  Recheck Cond: (color = 'red'::bpchar)"
+        "  Rows Removed by Index Recheck: 29331"
+        "  Heap Blocks: lossy=467"
+        "  ->  Bitmap Index Scan on mv_color_brin  (cost=0.00..12.11 rows=32093 width=0) (actual time=0.030..0.030 rows=4670 loops=1)"
+        "        Index Cond: (color = 'red'::bpchar)"
+        "Planning Time: 0.107 ms"
+        "Execution Time: 4.389 ms"
+
+    Mixed:
+
+Used Indicies:
+    "CREATE INDEX boat_color_bid_bt ON public.boat USING btree (color, bid)"
+    "CREATE INDEX boat_color_hash ON public.boat USING hash (color)"
+    "CREATE INDEX mv_color_brin ON public.schema3join USING brin (color) WITH (pages_per_range='20')"
+    "CREATE INDEX mv_color_hash ON public.schema3join USING hash (color)"
+    "CREATE INDEX mv_color_sname_bt ON public.schema3join USING btree (color, sname)"
+    CREATE INDEX boat_color_brin ON public.boat using brin(color) with (pages_per_range = 20);
+    "CREATE INDEX res_bid_brin ON public.reserves USING brin (bid) WITH (pages_per_range='12')"
+
+    Btree:
+
+        comment: provides great performance boost.
+
+    Hash:
+
+        comment: a bit worse performance than a btree
+
+    Brin:
+
+        comment: worse performance than a normal seq scan so had to force it off.
+
+    Mixed:
+    
+        comment: 
+        using 2 indicies resulted in worse performance than just btree indicies.
+        using more than one index on the optimized query is not possible since it
+        is just 1 filter step.
+
+Discussion: 
+    the optimized query uses a materialized view of the join saving the cost of that
+    part which boosts performance.

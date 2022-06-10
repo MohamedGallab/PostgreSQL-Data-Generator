@@ -199,7 +199,6 @@ Used Indicies:
         (act_id ASC NULLS LAST)
         TABLESPACE pg_default;
 
-            comment: improved performance
 
     Hash:
         CREATE INDEX IF NOT EXISTS "actor_act-id_hash"
@@ -216,8 +215,6 @@ Used Indicies:
         (mov_id)
         TABLESPACE pg_default;
 
-            comment: improved performance
-
         CREATE INDEX IF NOT EXISTS "actor_act-id_brin"
         ON public.actor USING brin
         (act_id)
@@ -230,8 +227,6 @@ Used Indicies:
         ON public.movie_cast USING hash
         (mov_id)
         TABLESPACE pg_default;
-            
-            comment: improved performance
 
          CREATE INDEX IF NOT EXISTS "actor_act-id_btree"
         ON public.actor USING btree

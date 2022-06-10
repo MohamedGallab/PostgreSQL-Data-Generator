@@ -49,11 +49,19 @@
         from student
         where department = 'CSEN'
 
+        comment: it makes sense that there will be a lot of
+        queries that are department specific on the students
+        table so creating materialized views of them will save
+        a lot of time
+
     Schema 2:
         create MATERIALIZED VIEW hasDependants as
         select distinct d.essn
         from employee e, dependent d
         where ssn=essn;
+
+        comment: due to the simple nature of query 5 the only way to improve
+        performance is to use a materialized view 
 
     Schema 3:
         create MATERIALIZED VIEW schema3join as
@@ -62,9 +70,16 @@
         inner join reserves on sailors.sid = reserves.sid
         inner join boat on boat.bid = reserves.bid
 
+        comment: because of the frequency that queries will be done requiring a join
+        between the 3 tables we can save time across all 3 queries by having a materialized
+        view of the join
+
     Schema 4:
         create MATERIALIZED VIEW Mdirection as
         select m.*, d.*
         from movie m 
         inner join movie_direction md on m.mov_id = md.mov_id
         inner join director d on d.dir_id = md.dir_id
+
+        comment: due to the simple nature of query 12 the only way to improve
+        performance is to use a materialized view
