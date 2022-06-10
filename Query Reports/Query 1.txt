@@ -1,0 +1,252 @@
+Given Query:
+
+    No Indicies:
+        "Hash Full Join  (cost=1208.34..2523.69 rows=1131 width=65) (actual time=9.854..18.199 rows=1749 loops=1)"
+        "  Hash Cond: (student.id = t.student_id)"
+        "  ->  Seq Scan on student  (cost=0.00..1311.00 rows=1131 width=25) (actual time=0.029..8.007 rows=1100 loops=1)"
+        "        Filter: ((department)::text = 'CSEN'::text)"
+        "        Rows Removed by Filter: 64900"
+        "  ->  Hash  (cost=1200.09..1200.09 rows=660 width=40) (actual time=9.814..9.817 rows=660 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 55kB"
+        "        ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.055..9.586 rows=660 loops=1)"
+        "              Hash Cond: (t.section_id = s.section_id)"
+        "              ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.021..3.997 rows=65999 loops=1)"
+        "              ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.025..0.026 rows=1 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                    ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.013..0.021 rows=1 loops=1)"
+        "                          Filter: ((semester = 1) AND (year = 2019))"
+        "                          Rows Removed by Filter: 99"
+        "Planning Time: 0.419 ms"
+        "Execution Time: 18.326 ms"
+
+    Btree:
+        "Hash Full Join  (cost=415.44..919.93 rows=1131 width=65) (actual time=0.669..1.039 rows=1749 loops=1)"
+        "  Hash Cond: (student.id = t.student_id)"
+        "  ->  Bitmap Heap Scan on student  (cost=17.06..517.20 rows=1131 width=25) (actual time=0.044..0.121 rows=1100 loops=1)"
+        "        Recheck Cond: ((department)::text = 'CSEN'::text)"
+        "        Heap Blocks: exact=9"
+        "        ->  Bitmap Index Scan on student_btree  (cost=0.00..16.78 rows=1131 width=0) (actual time=0.037..0.037 rows=1100 loops=1)"
+        "              Index Cond: ((department)::text = 'CSEN'::text)"
+        "  ->  Hash  (cost=390.14..390.14 rows=660 width=40) (actual time=0.617..0.618 rows=660 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 55kB"
+        "        ->  Nested Loop  (cost=9.41..390.14 rows=660 width=40) (actual time=0.103..0.494 rows=660 loops=1)"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.010..0.017 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "              ->  Bitmap Heap Scan on takes t  (cost=9.41..381.04 rows=660 width=12) (actual time=0.087..0.403 rows=660 loops=1)"
+        "                    Recheck Cond: (section_id = s.section_id)"
+        "                    Heap Blocks: exact=357"
+        "                    ->  Bitmap Index Scan on takes_btree  (cost=0.00..9.24 rows=660 width=0) (actual time=0.050..0.050 rows=660 loops=1)"
+        "                          Index Cond: (section_id = s.section_id)"
+        "Planning Time: 0.307 ms"
+        "Execution Time: 1.159 ms"
+
+    Hash:
+        "Hash Full Join  (cost=427.15..931.64 rows=1131 width=65) (actual time=1.557..2.058 rows=1749 loops=1)"
+        "  Hash Cond: (student.id = t.student_id)"
+        "  ->  Bitmap Heap Scan on student  (cost=17.06..517.20 rows=1131 width=25) (actual time=0.089..0.184 rows=1100 loops=1)"
+        "        Recheck Cond: ((department)::text = 'CSEN'::text)"
+        "        Heap Blocks: exact=9"
+        "        ->  Bitmap Index Scan on student_hash  (cost=0.00..16.78 rows=1131 width=0) (actual time=0.077..0.078 rows=1100 loops=1)"
+        "              Index Cond: ((department)::text = 'CSEN'::text)"
+        "  ->  Hash  (cost=401.84..401.84 rows=660 width=40) (actual time=1.455..1.456 rows=660 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 55kB"
+        "        ->  Nested Loop  (cost=21.11..401.84 rows=660 width=40) (actual time=0.192..1.180 rows=660 loops=1)"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.015..0.028 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "              ->  Bitmap Heap Scan on takes t  (cost=21.11..392.74 rows=660 width=12) (actual time=0.168..1.008 rows=660 loops=1)"
+        "                    Recheck Cond: (section_id = s.section_id)"
+        "                    Heap Blocks: exact=357"
+        "                    ->  Bitmap Index Scan on takes_hash  (cost=0.00..20.95 rows=660 width=0) (actual time=0.108..0.109 rows=660 loops=1)"
+        "                          Index Cond: (section_id = s.section_id)"
+        "Planning Time: 2.261 ms"
+        "Execution Time: 2.242 ms"
+
+    Brin:
+        "Hash Full Join  (cost=940.97..2140.29 rows=1131 width=65) (actual time=3.628..14.797 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = student.id)"
+        "  ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.081..10.638 rows=660 loops=1)"
+        "        Hash Cond: (t.section_id = s.section_id)"
+        "        ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.029..4.500 rows=65999 loops=1)"
+        "        ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.031..0.033 rows=1 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.014..0.026 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "  ->  Hash  (cost=924.32..924.32 rows=1131 width=25) (actual time=3.525..3.526 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Bitmap Heap Scan on student  (cost=12.35..924.32 rows=1131 width=25) (actual time=0.067..3.338 rows=1100 loops=1)"
+        "              Recheck Cond: ((department)::text = 'CSEN'::text)"
+        "              Rows Removed by Index Recheck: 16308"
+        "              Heap Blocks: lossy=128"
+        "              ->  Bitmap Index Scan on student_brin  (cost=0.00..12.07 rows=34078 width=0) (actual time=0.053..0.053 rows=1280 loops=1)"
+        "                    Index Cond: ((department)::text = 'CSEN'::text)"
+        "Planning Time: 0.537 ms"
+        "Execution Time: 14.997 ms"
+
+    Mixed:
+        "Hash Full Join  (cost=427.15..931.64 rows=1131 width=65) (actual time=0.812..1.211 rows=1749 loops=1)"
+        "  Hash Cond: (student.id = t.student_id)"
+        "  ->  Bitmap Heap Scan on student  (cost=17.06..517.20 rows=1131 width=25) (actual time=0.043..0.126 rows=1100 loops=1)"
+        "        Recheck Cond: ((department)::text = 'CSEN'::text)"
+        "        Heap Blocks: exact=9"
+        "        ->  Bitmap Index Scan on student_btree  (cost=0.00..16.78 rows=1131 width=0) (actual time=0.036..0.036 rows=1100 loops=1)"
+        "              Index Cond: ((department)::text = 'CSEN'::text)"
+        "  ->  Hash  (cost=401.84..401.84 rows=660 width=40) (actual time=0.761..0.762 rows=660 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 55kB"
+        "        ->  Nested Loop  (cost=21.11..401.84 rows=660 width=40) (actual time=0.114..0.595 rows=660 loops=1)"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.011..0.018 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "              ->  Bitmap Heap Scan on takes t  (cost=21.11..392.74 rows=660 width=12) (actual time=0.096..0.502 rows=660 loops=1)"
+        "                    Recheck Cond: (section_id = s.section_id)"
+        "                    Heap Blocks: exact=357"
+        "                    ->  Bitmap Index Scan on takes_hash  (cost=0.00..20.95 rows=660 width=0) (actual time=0.058..0.058 rows=660 loops=1)"
+        "                          Index Cond: (section_id = s.section_id)"
+        "Planning Time: 2.146 ms"
+        "Execution Time: 1.357 ms"
+
+Optimized Query:
+
+    No Indicies:
+        "Hash Full Join  (cost=36.26..1236.43 rows=1100 width=64) (actual time=0.236..9.361 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.032..8.793 rows=660 loops=1)"
+        "        Hash Cond: (t.section_id = s.section_id)"
+        "        ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.007..3.712 rows=65999 loops=1)"
+        "        ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.019..0.020 rows=1 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.008..0.014 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "  ->  Hash  (cost=20.00..20.00 rows=1100 width=24) (actual time=0.196..0.197 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Seq Scan on csenstudents  (cost=0.00..20.00 rows=1100 width=24) (actual time=0.009..0.064 rows=1100 loops=1)"
+        "Planning Time: 0.216 ms"
+        "Execution Time: 9.492 ms"
+
+    Btree:
+        "Hash Full Join  (cost=43.16..426.47 rows=1100 width=64) (actual time=0.285..0.923 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Nested Loop  (cost=9.41..390.14 rows=660 width=40) (actual time=0.103..0.486 rows=660 loops=1)"
+        "        ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.008..0.014 rows=1 loops=1)"
+        "              Filter: ((semester = 1) AND (year = 2019))"
+        "              Rows Removed by Filter: 99"
+        "        ->  Bitmap Heap Scan on takes t  (cost=9.41..381.04 rows=660 width=12) (actual time=0.089..0.390 rows=660 loops=1)"
+        "              Recheck Cond: (section_id = s.section_id)"
+        "              Heap Blocks: exact=357"
+        "              ->  Bitmap Index Scan on section_id_index  (cost=0.00..9.24 rows=660 width=0) (actual time=0.054..0.054 rows=660 loops=1)"
+        "                    Index Cond: (section_id = s.section_id)"
+        "  ->  Hash  (cost=20.00..20.00 rows=1100 width=24) (actual time=0.172..0.173 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Seq Scan on csenstudents  (cost=0.00..20.00 rows=1100 width=24) (actual time=0.008..0.065 rows=1100 loops=1)"
+        "Planning Time: 0.228 ms"
+        "Execution Time: 1.023 ms"
+
+    Hash:
+        "Hash Full Join  (cost=54.86..438.18 rows=1100 width=64) (actual time=0.315..0.997 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Nested Loop  (cost=21.11..401.84 rows=660 width=40) (actual time=0.108..0.523 rows=660 loops=1)"
+        "        ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.008..0.014 rows=1 loops=1)"
+        "              Filter: ((semester = 1) AND (year = 2019))"
+        "              Rows Removed by Filter: 99"
+        "        ->  Bitmap Heap Scan on takes t  (cost=21.11..392.74 rows=660 width=12) (actual time=0.095..0.438 rows=660 loops=1)"
+        "              Recheck Cond: (section_id = s.section_id)"
+        "              Heap Blocks: exact=357"
+        "              ->  Bitmap Index Scan on takes_hash  (cost=0.00..20.95 rows=660 width=0) (actual time=0.060..0.060 rows=660 loops=1)"
+        "                    Index Cond: (section_id = s.section_id)"
+        "  ->  Hash  (cost=20.00..20.00 rows=1100 width=24) (actual time=0.198..0.199 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Seq Scan on csenstudents  (cost=0.00..20.00 rows=1100 width=24) (actual time=0.011..0.081 rows=1100 loops=1)"
+        "Planning Time: 1.279 ms"
+        "Execution Time: 1.120 ms"
+
+    Brin:
+        "Hash Full Join  (cost=36.26..1236.43 rows=1100 width=64) (actual time=0.287..10.245 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Hash Join  (cost=2.51..1200.09 rows=660 width=40) (actual time=0.030..9.562 rows=660 loops=1)"
+        "        Hash Cond: (t.section_id = s.section_id)"
+        "        ->  Seq Scan on takes t  (cost=0.00..1016.99 rows=65999 width=12) (actual time=0.008..4.054 rows=65999 loops=1)"
+        "        ->  Hash  (cost=2.50..2.50 rows=1 width=28) (actual time=0.014..0.016 rows=1 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "              ->  Seq Scan on section s  (cost=0.00..2.50 rows=1 width=28) (actual time=0.007..0.013 rows=1 loops=1)"
+        "                    Filter: ((semester = 1) AND (year = 2019))"
+        "                    Rows Removed by Filter: 99"
+        "  ->  Hash  (cost=20.00..20.00 rows=1100 width=24) (actual time=0.247..0.248 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Seq Scan on csenstudents  (cost=0.00..20.00 rows=1100 width=24) (actual time=0.012..0.089 rows=1100 loops=1)"
+        "Planning Time: 0.281 ms"
+        "Execution Time: 10.369 ms"
+
+    Mixed:
+        "Hash Full Join  (cost=87.78..481.61 rows=1100 width=64) (actual time=0.365..1.028 rows=1749 loops=1)"
+        "  Hash Cond: (t.student_id = csenstudents.id)"
+        "  ->  Nested Loop  (cost=21.26..412.50 rows=660 width=40) (actual time=0.123..0.511 rows=660 loops=1)"
+        "        ->  Index Scan using section_btree on section s  (cost=0.14..13.15 rows=1 width=28) (actual time=0.018..0.019 rows=1 loops=1)"
+        "              Index Cond: ((semester = 1) AND (year = 2019))"
+        "        ->  Bitmap Heap Scan on takes t  (cost=21.11..392.74 rows=660 width=12) (actual time=0.097..0.418 rows=660 loops=1)"
+        "              Recheck Cond: (section_id = s.section_id)"
+        "              Heap Blocks: exact=357"
+        "              ->  Bitmap Index Scan on takes_hash  (cost=0.00..20.95 rows=660 width=0) (actual time=0.062..0.062 rows=660 loops=1)"
+        "                    Index Cond: (section_id = s.section_id)"
+        "  ->  Hash  (cost=52.78..52.78 rows=1100 width=24) (actual time=0.233..0.234 rows=1100 loops=1)"
+        "        Buckets: 2048  Batches: 1  Memory Usage: 81kB"
+        "        ->  Index Scan using view_btree on csenstudents  (cost=0.28..52.78 rows=1100 width=24) (actual time=0.009..0.128 rows=1100 loops=1)"
+        "Planning Time: 1.731 ms"
+        "Execution Time: 1.130 ms"
+
+Used Indicies:
+
+    Btree:
+        CREATE INDEX IF NOT EXISTS student_btree_index
+        ON public.student USING btree
+        (department COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        comment: the cost somehow decreased from by third of it's value.
+
+        CREATE INDEX IF NOT EXISTS takes_index
+        ON public.takes USING btree
+        (section_id ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        comment: the cost was decreased by 3 times.
+
+    Hash:
+        CREATE INDEX IF NOT EXISTS student_hash
+        ON public.student USING btree
+        (department COLLATE pg_catalog."default" ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        comment: the cost was low but btress performed slightly better.
+
+        CREATE INDEX IF NOT EXISTS takes_hash
+        ON public.takes USING hash
+        (section_id)
+        TABLESPACE pg_default;
+
+        comment: the cost was low but btress performed slightly better.
+
+    Brin:
+        CREATE INDEX IF NOT EXISTS student_brin
+        ON public.student USING brin
+        (department COLLATE pg_catalog."default")
+        TABLESPACE pg_default;
+
+        CREATE INDEX IF NOT EXISTS takes_brin
+        ON public.takes USING brin
+        (section_id)
+        TABLESPACE pg_default;
+
+        comment: the brin indices didn't decrease the cost by much for the old query. One of them wasn't actually used. For the optimized query, the two indicies weren't used.
+
+    Mixed:
+        CREATE INDEX IF NOT EXISTS view_btree
+        ON public.csenstudents USING btree
+        (id ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+        comment: 2 Btrees and 1 Hash indicies were used. The performance was good but btrees are still better. Seqscan had to be disabled as only one index was used and the other tables used seqscan. So, to show the using of 2 indicies, seqscan was disabled.
+        
+Discussion: The Btrees are the best in terms of performance as it decreased the cost 3 times for the old and optimized queries. The brin are the worst in terms of performance as it didn't decrease the cost by much. Hash indicies gave a good performance and very near to btrees but btrees are better slightly .Mixing indicies gave a good performance but not better than using Btrees only. Interestingly, if all created indices were enabled, the planner uses higher cost plan and doesn't use the lowest cost one (the btrees).

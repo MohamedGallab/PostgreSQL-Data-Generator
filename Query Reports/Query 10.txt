@@ -1,0 +1,251 @@
+Given Query:
+    No Indicies:
+        "Hash Semi Join  (cost=5275.33..7912.34 rows=1 width=48) (actual time=15.652..25.358 rows=222 loops=1)"
+        "  Hash Cond: (actor.act_id = movie_cast.act_id)"
+        "  ->  Seq Scan on actor  (cost=0.00..2322.00 rows=120000 width=48) (actual time=0.010..4.240 rows=120000 loops=1)"
+        "  ->  Hash  (cost=5275.31..5275.31 rows=1 width=4) (actual time=15.620..15.627 rows=222 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 16kB"
+        "        ->  Hash Semi Join  (cost=3174.01..5275.31 rows=1 width=4) (actual time=7.938..15.591 rows=222 loops=1)"
+        "              Hash Cond: (movie_cast.mov_id = movie.mov_id)"
+        "              ->  Seq Scan on movie_cast  (cost=0.00..1838.21 rows=100221 width=8) (actual time=0.003..3.578 rows=100221 loops=1)"
+        "              ->  Hash  (cost=3174.00..3174.00 rows=1 width=4) (actual time=7.467..7.469 rows=1 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.523..7.460 rows=1 loops=1)"
+        "                          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "                          Rows Removed by Filter: 99999"
+        "Planning Time: 0.163 ms"
+        "Execution Time: 25.409 ms"
+
+    Btree:
+        "Nested Loop  (cost=5275.73..5275.83 rows=1 width=48) (actual time=18.177..18.734 rows=222 loops=1)"
+        "  ->  HashAggregate  (cost=5275.32..5275.33 rows=1 width=4) (actual time=18.148..18.171 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Hash Semi Join  (cost=3174.01..5275.31 rows=1 width=4) (actual time=9.815..18.097 rows=222 loops=1)"
+        "              Hash Cond: (movie_cast.mov_id = movie.mov_id)"
+        "              ->  Seq Scan on movie_cast  (cost=0.00..1838.21 rows=100221 width=8) (actual time=0.007..3.933 rows=100221 loops=1)"
+        "              ->  Hash  (cost=3174.00..3174.00 rows=1 width=4) (actual time=9.270..9.270 rows=1 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.629..9.264 rows=1 loops=1)"
+        "                          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "                          Rows Removed by Filter: 99999"
+        "  ->  Index Scan using ""actor_act-id_btree"" on actor  (cost=0.42..0.49 rows=1 width=48) (actual time=0.002..0.002 rows=1 loops=222)"
+        "        Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.253 ms"
+        "Execution Time: 18.776 ms"
+        
+    Hash:
+        "Nested Loop  (cost=5275.32..5275.42 rows=1 width=48) (actual time=18.405..19.686 rows=222 loops=1)"
+        "  ->  HashAggregate  (cost=5275.32..5275.33 rows=1 width=4) (actual time=18.378..18.432 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Hash Semi Join  (cost=3174.01..5275.31 rows=1 width=4) (actual time=9.433..18.317 rows=222 loops=1)"
+        "              Hash Cond: (movie_cast.mov_id = movie.mov_id)"
+        "              ->  Seq Scan on movie_cast  (cost=0.00..1838.21 rows=100221 width=8) (actual time=0.009..4.069 rows=100221 loops=1)"
+        "              ->  Hash  (cost=3174.00..3174.00 rows=1 width=4) (actual time=8.892..8.892 rows=1 loops=1)"
+        "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
+        "                    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.708..8.885 rows=1 loops=1)"
+        "                          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "                          Rows Removed by Filter: 99999"
+        "  ->  Index Scan using ""actor_act-id_hash"" on actor  (cost=0.00..0.08 rows=1 width=48) (actual time=0.005..0.005 rows=1 loops=222)"
+        "        Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.207 ms"
+        "Execution Time: 19.728 ms"
+
+    Brin:
+        "Hash Semi Join  (cost=4068.44..6705.45 rows=1 width=48) (actual time=8.146..18.364 rows=222 loops=1)"
+        "  Hash Cond: (actor.act_id = movie_cast.act_id)"
+        "  ->  Seq Scan on actor  (cost=0.00..2322.00 rows=120000 width=48) (actual time=0.019..4.526 rows=120000 loops=1)"
+        "  ->  Hash  (cost=4068.43..4068.43 rows=1 width=4) (actual time=8.104..8.107 rows=222 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 16kB"
+        "        ->  Nested Loop  (cost=3186.01..4068.43 rows=1 width=4) (actual time=7.993..8.085 rows=222 loops=1)"
+        "              ->  HashAggregate  (cost=3174.00..3174.01 rows=1 width=4) (actual time=7.816..7.817 rows=1 loops=1)"
+        "                    Group Key: movie.mov_id"
+        "                    Batches: 1  Memory Usage: 24kB"
+        "                    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=1.008..7.808 rows=1 loops=1)"
+        "                          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "                          Rows Removed by Filter: 99999"
+        "              ->  Bitmap Heap Scan on movie_cast  (cost=12.01..894.41 rows=1 width=8) (actual time=0.158..0.240 rows=222 loops=1)"
+        "                    Recheck Cond: (mov_id = movie.mov_id)"
+        "                    Rows Removed by Index Recheck: 3618"
+        "                    Heap Blocks: lossy=32"
+        "                    ->  Bitmap Index Scan on ""cast_movie-id_brin""  (cost=0.00..12.01 rows=3712 width=0) (actual time=0.023..0.023 rows=320 loops=1)"
+        "                          Index Cond: (mov_id = movie.mov_id)"
+        "Planning Time: 0.310 ms"
+        "Execution Time: 18.514 ms"
+        
+    Mixed:
+        "Nested Loop  (cost=4068.85..4068.95 rows=1 width=48) (actual time=12.199..12.586 rows=222 loops=1)"
+        "  ->  HashAggregate  (cost=4068.43..4068.44 rows=1 width=4) (actual time=12.186..12.200 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Nested Loop  (cost=3186.01..4068.43 rows=1 width=4) (actual time=12.045..12.154 rows=222 loops=1)"
+        "              ->  HashAggregate  (cost=3174.00..3174.01 rows=1 width=4) (actual time=11.795..11.796 rows=1 loops=1)"
+        "                    Group Key: movie.mov_id"
+        "                    Batches: 1  Memory Usage: 24kB"
+        "                    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=1.070..11.780 rows=1 loops=1)"
+        "                          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "                          Rows Removed by Filter: 99999"
+        "              ->  Bitmap Heap Scan on movie_cast  (cost=12.01..894.41 rows=1 width=8) (actual time=0.197..0.297 rows=222 loops=1)"
+        "                    Recheck Cond: (mov_id = movie.mov_id)"
+        "                    Rows Removed by Index Recheck: 3618"
+        "                    Heap Blocks: lossy=32"
+        "                    ->  Bitmap Index Scan on ""cast_movie-id_brin""  (cost=0.00..12.01 rows=3712 width=0) (actual time=0.026..0.026 rows=320 loops=1)"
+        "                          Index Cond: (mov_id = movie.mov_id)"
+        "  ->  Index Scan using ""actor_act-id_btree"" on actor  (cost=0.42..0.49 rows=1 width=48) (actual time=0.001..0.002 rows=1 loops=222)"
+        "        Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.216 ms"
+        "Execution Time: 12.632 ms"
+        
+        
+
+Optimized Query:
+    No indicies:
+        "Hash Semi Join  (cost=5262.77..7899.79 rows=1 width=48) (actual time=15.610..26.825 rows=222 loops=1)"
+        "  Hash Cond: (actor.act_id = movie_cast.act_id)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.666..11.608 rows=1 loops=1)"
+        "          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "          Rows Removed by Filter: 99999"
+        "  ->  Seq Scan on actor  (cost=0.00..2322.00 rows=120000 width=48) (actual time=0.007..4.809 rows=120000 loops=1)"
+        "  ->  Hash  (cost=2088.76..2088.76 rows=1 width=4) (actual time=15.583..15.584 rows=222 loops=1)"
+        "        Buckets: 1024  Batches: 1  Memory Usage: 16kB"
+        "        ->  Seq Scan on movie_cast  (cost=0.00..2088.76 rows=1 width=4) (actual time=11.838..15.554 rows=222 loops=1)"
+        "              Filter: (mov_id = $0)"
+        "              Rows Removed by Filter: 99999"
+        "Planning Time: 0.133 ms"
+        "Execution Time: 26.852 ms"
+
+    Btree:
+        "Nested Loop  (cost=5263.18..5271.22 rows=1 width=48) (actual time=12.812..13.185 rows=222 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.611..7.896 rows=1 loops=1)"
+        "          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "          Rows Removed by Filter: 99999"
+        "  ->  HashAggregate  (cost=2088.76..2088.78 rows=1 width=4) (actual time=12.794..12.813 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Seq Scan on movie_cast  (cost=0.00..2088.76 rows=1 width=4) (actual time=8.193..12.748 rows=222 loops=1)"
+        "              Filter: (mov_id = $0)"
+        "              Rows Removed by Filter: 99999"
+        "  ->  Index Scan using ""actor_act-id_btree"" on actor  (cost=0.42..8.44 rows=1 width=48) (actual time=0.001..0.001 rows=1 loops=222)"
+        "        Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.197 ms"
+        "Execution Time: 13.218 ms"
+
+    Hash:
+        "Nested Loop  (cost=5262.76..5270.80 rows=1 width=48) (actual time=17.603..18.252 rows=222 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.842..12.366 rows=1 loops=1)"
+        "          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "          Rows Removed by Filter: 99999"
+        "  ->  HashAggregate  (cost=2088.76..2088.78 rows=1 width=4) (actual time=17.583..17.605 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Seq Scan on movie_cast  (cost=0.00..2088.76 rows=1 width=4) (actual time=12.821..17.515 rows=222 loops=1)"
+        "              Filter: (mov_id = $0)"
+        "              Rows Removed by Filter: 99999"
+        "  ->  Index Scan using ""actor_act-id_hash"" on actor  (cost=0.00..8.02 rows=1 width=48) (actual time=0.003..0.003 rows=1 loops=222)"
+        "        Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.338 ms"
+        "Execution Time: 18.333 ms"
+
+    Brin:
+        "Nested Loop  (cost=4080.42..5244.10 rows=1 width=48) (actual time=8.405..58.187 rows=222 loops=1)"
+        "  InitPlan 1 (returns $0)"
+        "    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.614..7.951 rows=1 loops=1)"
+        "          Filter: (mov_title = 'Annie Hall'::bpchar)"
+        "          Rows Removed by Filter: 99999"
+        "  ->  HashAggregate  (cost=894.41..894.42 rows=1 width=4) (actual time=8.289..8.412 rows=222 loops=1)"
+        "        Group Key: movie_cast.act_id"
+        "        Batches: 1  Memory Usage: 56kB"
+        "        ->  Bitmap Heap Scan on movie_cast  (cost=12.01..894.41 rows=1 width=4) (actual time=8.160..8.249 rows=222 loops=1)"
+        "              Recheck Cond: (mov_id = $0)"
+        "              Rows Removed by Index Recheck: 3618"
+        "              Heap Blocks: lossy=32"
+        "              ->  Bitmap Index Scan on ""cast_movie-id_brin""  (cost=0.00..12.01 rows=3712 width=0) (actual time=8.024..8.024 rows=320 loops=1)"
+        "                    Index Cond: (mov_id = $0)"
+        "  ->  Bitmap Heap Scan on actor  (cost=12.01..1175.67 rows=1 width=48) (actual time=0.114..0.221 rows=1 loops=222)"
+        "        Recheck Cond: (act_id = movie_cast.act_id)"
+        "        Rows Removed by Index Recheck: 3423"
+        "        Heap Blocks: lossy=7104"
+        "        ->  Bitmap Index Scan on ""actor_act-id_brin""  (cost=0.00..12.01 rows=3333 width=0) (actual time=0.009..0.009 rows=320 loops=222)"
+        "              Index Cond: (act_id = movie_cast.act_id)"
+        "Planning Time: 0.207 ms"
+        "Execution Time: 58.358 ms"
+    
+    Mixed:
+    "Nested Loop  (cost=3182.44..3190.47 rows=1 width=48) (actual time=8.808..9.510 rows=222 loops=1)"
+    "  InitPlan 1 (returns $0)"
+    "    ->  Seq Scan on movie  (cost=0.00..3174.00 rows=1 width=4) (actual time=0.558..8.711 rows=1 loops=1)"
+    "          Filter: (mov_title = 'Annie Hall'::bpchar)"
+    "          Rows Removed by Filter: 99999"
+    "  ->  HashAggregate  (cost=8.02..8.03 rows=1 width=4) (actual time=8.794..8.816 rows=222 loops=1)"
+    "        Group Key: movie_cast.act_id"
+    "        Batches: 1  Memory Usage: 56kB"
+    "        ->  Index Scan using ""cast_movie-id_hash"" on movie_cast  (cost=0.00..8.02 rows=1 width=4) (actual time=8.731..8.756 rows=222 loops=1)"
+    "              Index Cond: (mov_id = $0)"
+    "  ->  Index Scan using ""actor_act-id_btree"" on actor  (cost=0.42..8.44 rows=1 width=48) (actual time=0.003..0.003 rows=1 loops=222)"
+    "        Index Cond: (act_id = movie_cast.act_id)"
+    "Planning Time: 0.239 ms"
+    "Execution Time: 9.552 ms"
+       
+
+Used Indicies:
+
+    Btree:
+         CREATE INDEX IF NOT EXISTS "actor_act-id_btree"
+        ON public.actor USING btree
+        (act_id ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+
+    Hash:
+        CREATE INDEX IF NOT EXISTS "actor_act-id_hash"
+        ON public.actor USING hash
+        (act_id)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+       
+
+    Brin:
+        CREATE INDEX IF NOT EXISTS "cast_movie-id_brin"
+        ON public.movie_cast USING brin
+        (mov_id)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+
+        CREATE INDEX IF NOT EXISTS "actor_act-id_brin"
+        ON public.actor USING brin
+        (act_id)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+
+    Mixed:
+        CREATE INDEX IF NOT EXISTS "cast_movie-id_hash"
+        ON public.movie_cast USING hash
+        (mov_id)
+        TABLESPACE pg_default;
+            
+            comment: improved performance
+
+         CREATE INDEX IF NOT EXISTS "actor_act-id_btree"
+        ON public.actor USING btree
+        (act_id ASC NULLS LAST)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+
+        CREATE INDEX IF NOT EXISTS "cast_movie-id_brin"
+        ON public.movie_cast USING brin
+        (mov_id)
+        TABLESPACE pg_default;
+
+            comment: improved performance
+
+Discussion: The alternative Query has better performance because the change (= "one record") has lower cost than the original (in)
+    
