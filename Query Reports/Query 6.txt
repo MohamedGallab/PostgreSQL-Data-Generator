@@ -25,51 +25,242 @@ Given Query:
         "Execution Time: 6.413 ms"
 
     Btree:
+        "GroupAggregate  (cost=9.49..567.04 rows=150 width=12) (actual time=0.241..3.194 rows=100 loops=1)"
+        "  Group Key: department.dnumber"
+        "  ->  Nested Loop  (cost=9.49..547.37 rows=3633 width=4) (actual time=0.138..2.704 rows=10899 loops=1)"
+        "        ->  Merge Join  (cost=9.21..400.96 rows=50 width=8) (actual time=0.129..1.627 rows=150 loops=1)"
+        "              Merge Cond: (department.dnumber = employee_1.dno)"
+        "              ->  Sort  (cost=8.92..9.30 rows=150 width=4) (actual time=0.042..0.047 rows=150 loops=1)"
+        "                    Sort Key: department.dnumber"
+        "                    Sort Method: quicksort  Memory: 32kB"
+        "                    ->  Seq Scan on department  (cost=0.00..3.50 rows=150 width=4) (actual time=0.008..0.015 rows=150 loops=1)"
+        "              ->  GroupAggregate  (cost=0.29..390.16 rows=50 width=4) (actual time=0.085..1.558 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Index Only Scan using emp_dno_salary_bt on employee employee_1  (cost=0.29..308.29 rows=16000 width=4) (actual time=0.009..0.791 rows=16000 loops=1)"
+        "                          Heap Fetches: 0"
+        "        ->  Index Only Scan using emp_dno_salary_bt on employee  (cost=0.29..2.20 rows=73 width=4) (actual time=0.001..0.004 rows=73 loops=150)"
+        "              Index Cond: ((dno = department.dnumber) AND (salary > 40000))"
+        "              Heap Fetches: 0"
+        "Planning Time: 0.347 ms"
+        "Execution Time: 3.234 ms"
 
     Hash:
+        "GroupAggregate  (cost=10000001540.26..10000002305.84 rows=150 width=12) (actual time=3.220..11.174 rows=100 loops=1)"
+        "  Group Key: department.dnumber"
+        "  ->  Nested Loop  (cost=10000001540.26..10000002286.18 rows=3633 width=4) (actual time=3.042..10.629 rows=10899 loops=1)"
+        "        ->  Nested Loop  (cost=10000001540.26..10000001688.01 rows=50 width=8) (actual time=3.033..4.723 rows=150 loops=1)"
+        "              ->  GroupAggregate  (cost=10000001540.26..10000001662.14 rows=50 width=4) (actual time=3.023..4.585 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Sort  (cost=10000001540.26..10000001580.26 rows=16000 width=4) (actual time=2.976..3.584 rows=16000 loops=1)"
+        "                          Sort Key: employee_1.dno"
+        "                          Sort Method: quicksort  Memory: 1135kB"
+        "                          ->  Seq Scan on employee employee_1  (cost=10000000000.00..10000000423.00 rows=16000 width=4) (actual time=0.009..1.341 rows=16000 loops=1)"
+        "              ->  Index Scan using dep_dno_hash on department  (cost=0.00..0.50 rows=1 width=4) (actual time=0.001..0.001 rows=1 loops=150)"
+        "                    Index Cond: (dnumber = employee_1.dno)"
+        "        ->  Index Scan using emp_dno_hash on employee  (cost=0.00..11.23 rows=73 width=4) (actual time=0.013..0.036 rows=73 loops=150)"
+        "              Index Cond: (dno = department.dnumber)"
+        "              Filter: (salary > 40000)"
+        "              Rows Removed by Filter: 34"
+        "Planning Time: 0.274 ms"
+        "Execution Time: 11.343 ms"
 
     Brin:
+        "GroupAggregate  (cost=10000003348.95..10000033276.59 rows=150 width=12) (actual time=5.712..10.318 rows=100 loops=1)"
+        "  Group Key: department.dnumber"
+        "  ->  Merge Join  (cost=10000003348.95..10000033256.93 rows=3633 width=4) (actual time=5.571..9.800 rows=10899 loops=1)"
+        "        Merge Cond: (department.dnumber = employee.dno)"
+        "        ->  Nested Loop  (cost=10000002140.27..10000031957.30 rows=50 width=8) (actual time=2.894..5.814 rows=101 loops=1)"
+        "              ->  GroupAggregate  (cost=10000001540.26..10000001662.14 rows=50 width=4) (actual time=2.861..4.123 rows=101 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Sort  (cost=10000001540.26..10000001580.26 rows=16000 width=4) (actual time=2.810..3.312 rows=11003 loops=1)"
+        "                          Sort Key: employee_1.dno"
+        "                          Sort Method: quicksort  Memory: 1135kB"
+        "                          ->  Seq Scan on employee employee_1  (cost=10000000000.00..10000000423.00 rows=16000 width=4) (actual time=0.006..1.195 rows=16000 loops=1)"
+        "              ->  Bitmap Heap Scan on department  (cost=600.01..605.88 rows=1 width=4) (actual time=0.009..0.014 rows=1 loops=101)"
+        "                    Recheck Cond: (dnumber = employee_1.dno)"
+        "                    Rows Removed by Index Recheck: 149"
+        "                    Heap Blocks: lossy=201"
+        "                    ->  Bitmap Index Scan on dep_dno_brin  (cost=0.00..600.01 rows=150 width=0) (actual time=0.005..0.005 rows=20 loops=101)"
+        "                          Index Cond: (dnumber = employee_1.dno)"
+        "        ->  Sort  (cost=1208.68..1235.93 rows=10899 width=4) (actual time=2.674..3.200 rows=10899 loops=1)"
+        "              Sort Key: employee.dno"
+        "              Sort Method: quicksort  Memory: 895kB"
+        "              ->  Bitmap Heap Scan on employee  (cost=14.80..477.80 rows=10899 width=4) (actual time=0.015..1.553 rows=10899 loops=1)"
+        "                    Recheck Cond: (salary > 40000)"
+        "                    Rows Removed by Index Recheck: 5101"
+        "                    Heap Blocks: lossy=263"
+        "                    ->  Bitmap Index Scan on emp_sal_brin  (cost=0.00..12.07 rows=16000 width=0) (actual time=0.013..0.013 rows=2630 loops=1)"
+        "                          Index Cond: (salary > 40000)"
+        "Planning Time: 0.229 ms"
+        "Execution Time: 10.600 ms"
 
     Mixed:
+        "GroupAggregate  (cost=600.58..30851.40 rows=150 width=12) (actual time=0.218..5.527 rows=100 loops=1)"
+        "  Group Key: department.dnumber"
+        "  ->  Nested Loop  (cost=600.58..30831.74 rows=3633 width=4) (actual time=0.103..5.044 rows=10899 loops=1)"
+        "        ->  Nested Loop  (cost=600.29..30685.32 rows=50 width=8) (actual time=0.098..3.996 rows=150 loops=1)"
+        "              ->  GroupAggregate  (cost=0.29..390.16 rows=50 width=4) (actual time=0.076..1.604 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Index Only Scan using emp_dno_salary_bt on employee employee_1  (cost=0.29..308.29 rows=16000 width=4) (actual time=0.008..0.788 rows=16000 loops=1)"
+        "                          Heap Fetches: 0"
+        "              ->  Bitmap Heap Scan on department  (cost=600.01..605.88 rows=1 width=4) (actual time=0.009..0.013 rows=1 loops=150)"
+        "                    Recheck Cond: (dnumber = employee_1.dno)"
+        "                    Rows Removed by Index Recheck: 149"
+        "                    Heap Blocks: lossy=300"
+        "                    ->  Bitmap Index Scan on dep_dno_brin  (cost=0.00..600.01 rows=150 width=0) (actual time=0.004..0.004 rows=20 loops=150)"
+        "                          Index Cond: (dnumber = employee_1.dno)"
+        "        ->  Index Only Scan using emp_dno_salary_bt on employee  (cost=0.29..2.20 rows=73 width=4) (actual time=0.001..0.004 rows=73 loops=150)"
+        "              Index Cond: ((dno = department.dnumber) AND (salary > 40000))"
+        "              Heap Fetches: 0"
+        "Planning Time: 0.308 ms"
+        "Execution Time: 5.653 ms"
 
 Optimized Query:
 
     No Indicies:
-        "HashAggregate  (cost=517.50..519.37 rows=50 width=12) (actual time=2.512..2.523 rows=100 loops=1)"
-        "  Group Key: dno"
-        "  Filter: (count(ssn) > 5)"
+        "HashAggregate  (cost=1016.59..1018.09 rows=150 width=12) (actual time=6.209..6.219 rows=100 loops=1)"
+        "  Group Key: employee.dno"
         "  Batches: 1  Memory Usage: 48kB"
-        "  ->  Seq Scan on employee  (cost=0.00..463.00 rows=10899 width=8) (actual time=0.010..1.462 rows=10899 loops=1)"
-        "        Filter: (salary > 40000)"
-        "        Rows Removed by Filter: 5101"
-        "Planning Time: 0.076 ms"
-        "Execution Time: 2.557 ms"
+        "  ->  Hash Join  (cost=506.00..998.42 rows=3633 width=8) (actual time=2.742..5.237 rows=10899 loops=1)"
+        "        Hash Cond: (employee.dno = employee_1.dno)"
+        "        ->  Seq Scan on employee  (cost=0.00..463.00 rows=10899 width=8) (actual time=0.010..1.343 rows=10899 loops=1)"
+        "              Filter: (salary > 40000)"
+        "              Rows Removed by Filter: 5101"
+        "        ->  Hash  (cost=505.38..505.38 rows=50 width=4) (actual time=2.724..2.725 rows=150 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 14kB"
+        "              ->  HashAggregate  (cost=503.00..504.88 rows=50 width=4) (actual time=2.692..2.704 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    Batches: 1  Memory Usage: 48kB"
+        "                    ->  Seq Scan on employee employee_1  (cost=0.00..423.00 rows=16000 width=4) (actual time=0.003..0.674 rows=16000 loops=1)"
+        "Planning Time: 0.142 ms"
+        "Execution Time: 6.282 ms"
 
     Btree:
+        "HashAggregate  (cost=901.87..903.37 rows=150 width=12) (actual time=5.010..5.021 rows=100 loops=1)"
+        "  Group Key: employee.dno"
+        "  Batches: 1  Memory Usage: 48kB"
+        "  ->  Hash Join  (cost=391.29..883.71 rows=3633 width=8) (actual time=1.572..4.046 rows=10899 loops=1)"
+        "        Hash Cond: (employee.dno = employee_1.dno)"
+        "        ->  Seq Scan on employee  (cost=0.00..463.00 rows=10899 width=8) (actual time=0.009..1.335 rows=10899 loops=1)"
+        "              Filter: (salary > 40000)"
+        "              Rows Removed by Filter: 5101"
+        "        ->  Hash  (cost=390.66..390.66 rows=50 width=4) (actual time=1.557..1.558 rows=150 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 14kB"
+        "              ->  GroupAggregate  (cost=0.29..390.16 rows=50 width=4) (actual time=0.072..1.541 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Index Only Scan using emp_dno_salary_bt on employee employee_1  (cost=0.29..308.29 rows=16000 width=4) (actual time=0.015..0.763 rows=16000 loops=1)"
+        "                          Heap Fetches: 0"
+        "Planning Time: 0.232 ms"
+        "Execution Time: 5.067 ms"
 
     Hash:
+        "GroupAggregate  (cost=10000001540.26..10000003033.80 rows=150 width=12) (actual time=3.255..10.725 rows=100 loops=1)"
+        "  Group Key: employee.dno"
+        "  ->  Nested Loop  (cost=10000001540.26..10000003014.14 rows=3633 width=8) (actual time=3.076..10.161 rows=10899 loops=1)"
+        "        ->  GroupAggregate  (cost=10000001540.26..10000001662.14 rows=50 width=4) (actual time=3.063..4.608 rows=150 loops=1)"
+        "              Group Key: employee_1.dno"
+        "              Filter: (count(*) > 5)"
+        "              ->  Sort  (cost=10000001540.26..10000001580.26 rows=16000 width=4) (actual time=3.012..3.603 rows=16000 loops=1)"
+        "                    Sort Key: employee_1.dno"
+        "                    Sort Method: quicksort  Memory: 1135kB"
+        "                    ->  Seq Scan on employee employee_1  (cost=10000000000.00..10000000423.00 rows=16000 width=4) (actual time=0.010..1.286 rows=16000 loops=1)"
+        "        ->  Index Scan using emp_dno_hash on employee  (cost=0.00..26.30 rows=73 width=8) (actual time=0.011..0.033 rows=73 loops=150)"
+        "              Index Cond: (dno = employee_1.dno)"
+        "              Filter: (salary > 40000)"
+        "              Rows Removed by Filter: 34"
+        "Planning Time: 0.160 ms"
+        "Execution Time: 10.891 ms"
 
     Brin:
+        "GroupAggregate  (cost=10000002748.94..10000002981.93 rows=150 width=12) (actual time=5.911..8.579 rows=100 loops=1)"
+        "  Group Key: employee.dno"
+        "  ->  Merge Join  (cost=10000002748.94..10000002962.27 rows=3633 width=8) (actual time=5.801..8.089 rows=10899 loops=1)"
+        "        Merge Cond: (employee.dno = employee_1.dno)"
+        "        ->  Sort  (cost=1208.68..1235.93 rows=10899 width=8) (actual time=2.992..3.395 rows=10899 loops=1)"
+        "              Sort Key: employee.dno"
+        "              Sort Method: quicksort  Memory: 895kB"
+        "              ->  Bitmap Heap Scan on employee  (cost=14.80..477.80 rows=10899 width=8) (actual time=0.021..1.751 rows=10899 loops=1)"
+        "                    Recheck Cond: (salary > 40000)"
+        "                    Rows Removed by Index Recheck: 5101"
+        "                    Heap Blocks: lossy=263"
+        "                    ->  Bitmap Index Scan on emp_sal_brin  (cost=0.00..12.07 rows=16000 width=0) (actual time=0.014..0.015 rows=2630 loops=1)"
+        "                          Index Cond: (salary > 40000)"
+        "        ->  GroupAggregate  (cost=10000001540.26..10000001662.14 rows=50 width=4) (actual time=2.806..3.743 rows=100 loops=1)"
+        "              Group Key: employee_1.dno"
+        "              Filter: (count(*) > 5)"
+        "              ->  Sort  (cost=10000001540.26..10000001580.26 rows=16000 width=4) (actual time=2.756..3.103 rows=10901 loops=1)"
+        "                    Sort Key: employee_1.dno"
+        "                    Sort Method: quicksort  Memory: 1135kB"
+        "                    ->  Seq Scan on employee employee_1  (cost=10000000000.00..10000000423.00 rows=16000 width=4) (actual time=0.012..1.166 rows=16000 loops=1)"
+        "Planning Time: 0.163 ms"
+        "Execution Time: 8.855 ms"
 
     Mixed:
+        "HashAggregate  (cost=916.67..918.17 rows=150 width=12) (actual time=5.068..5.082 rows=100 loops=1)"
+        "  Group Key: employee.dno"
+        "  Batches: 1  Memory Usage: 48kB"
+        "  ->  Hash Join  (cost=406.08..898.50 rows=3633 width=8) (actual time=1.609..4.171 rows=10899 loops=1)"
+        "        Hash Cond: (employee.dno = employee_1.dno)"
+        "        ->  Bitmap Heap Scan on employee  (cost=14.80..477.80 rows=10899 width=8) (actual time=0.029..1.470 rows=10899 loops=1)"
+        "              Recheck Cond: (salary > 40000)"
+        "              Rows Removed by Index Recheck: 5101"
+        "              Heap Blocks: lossy=263"
+        "              ->  Bitmap Index Scan on emp_sal_brin  (cost=0.00..12.07 rows=16000 width=0) (actual time=0.013..0.013 rows=2630 loops=1)"
+        "                    Index Cond: (salary > 40000)"
+        "        ->  Hash  (cost=390.66..390.66 rows=50 width=4) (actual time=1.576..1.577 rows=150 loops=1)"
+        "              Buckets: 1024  Batches: 1  Memory Usage: 14kB"
+        "              ->  GroupAggregate  (cost=0.29..390.16 rows=50 width=4) (actual time=0.074..1.563 rows=150 loops=1)"
+        "                    Group Key: employee_1.dno"
+        "                    Filter: (count(*) > 5)"
+        "                    ->  Index Only Scan using emp_dno_salary_bt on employee employee_1  (cost=0.29..308.29 rows=16000 width=4) (actual time=0.010..0.792 rows=16000 loops=1)"
+        "                          Heap Fetches: 0"
+        "Planning Time: 0.196 ms"
+        "Execution Time: 5.147 ms"
 
         
 Used Indicies:
 
     Btree:
+        CREATE INDEX IF NOT EXISTS emp_dno_salary_bt
+        ON public.employee USING btree
+        (dno ASC NULLS LAST, salary ASC NULLS LAST)
+        TABLESPACE pg_default;
 
-            comment:
+            comment: covering index that allows for index only scan. the index helps the old
+            query a lot but the new one doesn't get much use out of it.
 
     Hash:
+        CREATE INDEX IF NOT EXISTS dep_dno_hash
+        ON public.department USING hash
+        (dnumber)
+        TABLESPACE pg_default;
 
-            comment:
+            comment: seq scan was turned off because its cost was better than the hash index.
+            produces worse performance when forced.
 
     Brin:
+        CREATE INDEX dep_dno_brin
+        ON public.department USING brin
+        (dnumber) with (pages_per_range = 32);
 
-            comment:
+        CREATE INDEX IF NOT EXISTS emp_sal_brin
+        ON public.employee USING brin
+        (salary) with (pages_per_range = 32);
+        TABLESPACE pg_default;
+
+            comment: again since we are doing Aggregate functions which requires access to
+            the whole table this causes any use of an index to hinder performance compared
+            to seq scan
 
     Mixed:
-    
-            comment:
+            comment: the above brin and btree indicies were used and they produce ok performance
+            but worse than just using only btree indicies
         
 Discussion:
+    this query is optimized by removing the unnecessary cross product.

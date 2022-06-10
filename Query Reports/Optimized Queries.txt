@@ -47,8 +47,11 @@
     select dno as dnumber, count(ssn)
     from employee
     where salary > 40000
+    and dno in (select dno
+    from employee
     group by dno
-    having count(ssn)>5
+    having count (*) > 5)
+    group by dno
 
 7:  
     select sname from schema3join where bid = 103;
